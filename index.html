@@ -28,19 +28,19 @@
     }
 
     .header {
-      min-height: 390px;
+      min-height: 370px;
       padding: 35px 20px 70px;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       color: white;
       text-align: center;
-      background: linear-gradient(135deg, #102451, #3d5796);
+      background: linear-gradient(135deg, #172b5d, #40599a);
     }
 
     .logo-wrapper {
-      width: 145px;
-      height: 145px;
+      width: 135px;
+      height: 135px;
       margin: 0 auto 20px;
       padding: 8px;
       border-radius: 50%;
@@ -56,14 +56,14 @@
 
     h1 {
       margin: 0;
-      color: white;
+      color: #fff;
       font-size: clamp(32px, 6vw, 60px);
       font-weight: 800;
     }
 
     .subtitle {
       margin-top: 10px;
-      color: white;
+      color: #fff;
       font-size: clamp(16px, 2.5vw, 25px);
     }
 
@@ -80,7 +80,7 @@
       gap: 8px;
       padding: 8px;
       border-radius: 18px;
-      background: white;
+      background: #fff;
       box-shadow: 0 12px 30px rgba(20, 42, 85, 0.16);
     }
 
@@ -96,16 +96,21 @@
       border: 0;
       outline: 0;
       color: #17346f;
+      background: transparent;
       font-family: inherit;
       font-size: 18px;
       text-align: right;
+    }
+
+    #searchInput::placeholder {
+      color: #888;
     }
 
     #searchButton {
       min-height: 62px;
       border: 0;
       border-radius: 13px;
-      color: white;
+      color: #fff;
       background: linear-gradient(135deg, #17346f, #31569d);
       cursor: pointer;
       font-family: inherit;
@@ -135,7 +140,7 @@
       padding: 18px;
       border: 1px solid #e2e8f2;
       border-radius: 18px;
-      background: white;
+      background: #fff;
       box-shadow: 0 7px 22px rgba(28, 50, 93, 0.07);
     }
 
@@ -150,7 +155,7 @@
       padding: 20px;
       border: 1px solid #e2e8f2;
       border-radius: 15px;
-      background: linear-gradient(145deg, #ffffff, #f9fbff);
+      background: linear-gradient(145deg, #fff, #f9fbff);
       box-shadow: 0 4px 13px rgba(25, 48, 92, 0.08);
     }
 
@@ -235,13 +240,13 @@
 
     @media (max-width: 700px) {
       .header {
-        min-height: 350px;
+        min-height: 340px;
         padding: 28px 15px 55px;
       }
 
       .logo-wrapper {
-        width: 115px;
-        height: 115px;
+        width: 110px;
+        height: 110px;
       }
 
       .container {
@@ -367,7 +372,7 @@
     }
 
 
-    function normalizeColumnName(value) {
+    function normalizeText(value) {
       return safe(value)
         .toLowerCase()
         .replaceAll("أ", "ا")
@@ -375,28 +380,33 @@
         .replaceAll("آ", "ا")
         .replaceAll("ى", "ي")
         .replaceAll("ة", "ه")
+        .replace(/\s+/g, " ");
+    }
+
+
+    function normalizeColumnName(value) {
+      return normalizeText(value)
         .replaceAll(" ", "")
         .replaceAll("_", "");
     }
 
 
     /*
-      تحديد اسم الموظف.
-      يدعم الإسم والاسم وأي عمود يحتوي على كلمة اسم.
+      اسم العمود الموجود عندك هو: الاسم
+      ويدعم أيضًا: الإسم
     */
     function getName(contact) {
-      const exactColumns = [
-        "الإسم",
+      const possibleNameColumns = [
         "الاسم",
+        "الإسم",
         "اسم الموظف",
-        "اسم الموظف الكامل",
         "الاسم الكامل",
         "name",
         "full_name",
         "employee_name"
       ];
 
-      for (const column of exactColumns) {
+      for (const column of possibleNameColumns) {
         if (
           Object.prototype.hasOwnProperty.call(contact, column) &&
           safe(contact[column]) !== ""
@@ -422,6 +432,25 @@
 
 
     function getJobTitle(contact) {
+      const possibleJobColumns = [
+        "المسمى الوظيفي",
+        "المسمى الوظيفى",
+        "الوظيفة",
+        "المسمى",
+        "job_title",
+        "job",
+        "title"
+      ];
+
+      for (const column of possibleJobColumns) {
+        if (
+          Object.prototype.hasOwnProperty.call(contact, column) &&
+          safe(contact[column]) !== ""
+        ) {
+          return safe(contact[column]);
+        }
+      }
+
       const jobEntry = Object.entries(contact).find(([key, value]) => {
         const columnName = normalizeColumnName(key);
 
@@ -462,6 +491,11 @@
     }
 
 
+    function isIdColumn(key) {
+      return normalizeColumnName(key) === "id";
+    }
+
+
     function isPhoneColumn(key) {
       const columnName = normalizeColumnName(key);
 
@@ -477,13 +511,16 @@
     }
 
 
-    function isIdColumn(key) {
-      return normalizeColumnName(key) === "id";
+    function normalizePhone(value) {
+      return safe(value).replace(/[^\d+]/g, "");
     }
 
 
-    function normalizePhone(value) {
-      return safe(value).replace(/[^\d+]/g, "");
+    function showMessage(message, className = "") {
+      contactsList.innerHTML = "";
+      emptyMessage.className = `empty ${className}`;
+      emptyMessage.innerHTML = message;
+      emptyMessage.style.display = "flex";
     }
 
 
@@ -495,6 +532,9 @@
           return;
         }
 
+        /*
+          لا نكرر الاسم أو المسمى الوظيفي داخل التفاصيل
+        */
         if (
           isNameColumn(key) ||
           isJobColumn(key) ||
@@ -512,7 +552,6 @@
           rows.push(`
             <div class="data-row">
               <span class="data-label">${label}</span>
-
               <span class="data-value phone-value">
                 <a href="tel:${escapeHtml(phone)}">${text}</a>
               </span>
@@ -532,27 +571,18 @@
     }
 
 
-    function showMessage(message, className = "") {
-      contactsList.innerHTML = "";
-      emptyMessage.className = `empty ${className}`;
-      emptyMessage.innerHTML = message;
-      emptyMessage.style.display = "flex";
-    }
-
-
     function displayContacts(contacts) {
       contactsList.innerHTML = "";
 
       /*
-        حذف أي سجل ليس لديه اسم.
-        لن تظهر بطاقة "بدون اسم" نهائيًا.
+        حذف السجلات التي لا تحتوي على اسم نهائيًا
       */
       const contactsWithNames = contacts.filter(contact => {
         return getName(contact) !== "";
       });
 
       if (contactsWithNames.length === 0) {
-        showMessage("لا توجد نتائج مطابقة");
+        showMessage("لا توجد نتائج مطابقة للاسم");
         return;
       }
 
@@ -590,10 +620,9 @@
 
     async function loadContacts() {
       /*
-        تحميل البيانات فقط، بدون عرضها عند فتح الصفحة.
+        يتم تحميل البيانات في الخلفية فقط.
+        لا يوجد displayContacts هنا، لذلك لن تظهر الأسماء تلقائيًا.
       */
-      showMessage("اكتب اسم الموظف ثم اضغط بحث");
-
       try {
         const {
           data,
@@ -623,8 +652,7 @@
 
 
     function searchContacts() {
-      const searchText =
-        searchInput.value.trim().toLowerCase();
+      const searchText = normalizeText(searchInput.value);
 
       if (!searchText) {
         showMessage("اكتب اسم الموظف ثم اضغط بحث");
@@ -632,15 +660,19 @@
       }
 
       const filteredContacts = allContacts.filter(contact => {
-        const name = getName(contact).toLowerCase();
+        const employeeName = normalizeText(getName(contact));
 
-        return name.includes(searchText);
+        return employeeName.includes(searchText);
       });
 
       displayContacts(filteredContacts);
     }
 
 
+    /*
+      البحث يعمل فقط عند الضغط على زر بحث
+      أو عند الضغط على Enter.
+    */
     searchButton.addEventListener("click", searchContacts);
 
     searchInput.addEventListener("keydown", function(event) {
@@ -651,8 +683,20 @@
 
 
     /*
-      لا يوجد input event هنا.
-      البحث لا يعمل أثناء الكتابة، فقط عند الضغط على بحث أو Enter.
+      عند الكتابة بعد نتيجة سابقة، نخفي النتائج
+      حتى يضغط المستخدم على بحث من جديد.
+    */
+    searchInput.addEventListener("input", function() {
+      contactsList.innerHTML = "";
+      emptyMessage.className = "empty";
+      emptyMessage.textContent = "اضغط بحث لعرض النتائج";
+      emptyMessage.style.display = "flex";
+    });
+
+
+    /*
+      عند فتح الصفحة:
+      تحميل البيانات فقط بدون عرض الأسماء.
     */
     loadContacts();
   </script>

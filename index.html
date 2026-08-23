@@ -1,249 +1,41 @@
-<script>
-  const SUPABASE_URL = "ضع_رابط_مشروع_سوبابيس_هنا";
-  const SUPABASE_ANON_KEY = "ضع_مفتاح_anon_هنا";
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دليل هواتف وزارة الداخلية</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
 
-  let contacts = [];
+<body>
 
-  function clean(value) {
-    return String(value ?? "")
-      .replace(/[‏\u200e\u200f]/g, "")
-      .replace(/\.0+$/, "")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
+  <header class="header">
+    <img src="./logo.png" alt="الشعار" class="logo" onerror="this.style.display='none'">
 
-  function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, function(char) {
-      return {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[char];
-    });
-  }
+    <div>
+      <h1>دليل هواتف وزارة الداخلية</h1>
+      <p>الإدارة العامة للجنسية ووثائق السفر الكويتية</p>
+    </div>
+  </header>
 
-  function whatsappNumber(number) {
-    let value = clean(number).replace(/[^\d+]/g, "");
+  <main class="container">
 
-    if (!value) return "";
+    <input
+      type="search"
+      id="searchInput"
+      placeholder="ابحث بالاسم أو المسمى الوظيفي أو الرقم..."
+    >
 
-    if (value.startsWith("+")) {
-      value = value.substring(1);
-    }
+    <div id="status">جاري تحميل البيانات...</div>
 
-    if (value.startsWith("00")) {
-      value = value.substring(2);
-    }
+    <div id="contactsList"></div>
 
-    if (value.startsWith("965")) {
-      return value;
-    }
+  </main>
 
-    if (value.startsWith("0")) {
-      value = value.substring(1);
-    }
+  <footer>
+    دليل جهات الاتصال
+  </footer>
 
-    return "965" + value;
-  }
-
-  function whatsappLink(number) {
-    const formatted = whatsappNumber(number);
-    return formatted ? "https://wa.me/" + formatted : "#";
-  }
-
-  async function searchByName() {
-    const search = clean(
-      document.getElementById("searchName").value
-    );
-
-    const results = document.getElementById("results");
-
-    if (!search) {
-      results.innerHTML =
-        '<div class="empty">اكتب اسم الشخص في خانة البحث</div>';
-      return;
-    }
-
-    results.innerHTML =
-      '<div class="empty">جاري البحث...</div>';
-
-    try {
-      const url =
-        SUPABASE_URL +
-        "/rest/v1/contacts" +
-        "?select=*" +
-        "&name=ilike.*" +
-        encodeURIComponent(search) +
-        "*";
-
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": "Bearer " + SUPABASE_ANON_KEY,
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(errorText);
-        throw new Error("فشل الاتصال بقاعدة البيانات");
-      }
-
-      const data = await response.json();
-
-      contacts = data.map(function(contact) {
-        return {
-          name: clean(contact.name),
-          job: clean(contact.job_title),
-          internal: clean(contact.employee_number),
-
-          direct: clean(
-            contact.direct ||
-            contact.direct_phone ||
-            contact.phone
-          ),
-
-          mobile: clean(
-            contact.mobile ||
-            contact.mobile_phone ||
-            contact.whatsapp
-          )
-        };
-      });
-
-      if (!contacts.length) {
-        results.innerHTML =
-          '<div class="empty">لم يتم العثور على الاسم</div>';
-        return;
-      }
-
-      results.innerHTML = contacts.map(function(contact, index) {
-        return `
-          <div class="card">
-            <div class="name">
-              ${escapeHTML(contact.name || "بدون اسم")}
-            </div>
-
-            <div class="job">
-              ${escapeHTML(contact.job || "المسمى الوظيفي غير متوفر")}
-            </div>
-
-            <button onclick="showDetails(${index})">
-              عرض التفاصيل
-            </button>
-          </div>
-        `;
-      }).join("");
-
-    } catch (error) {
-      console.error(error);
-
-      results.innerHTML =
-        '<div class="empty">حدث خطأ أثناء تحميل البيانات</div>';
-    }
-  }
-
-  function showDetails(index) {
-    const contact = contacts[index];
-
-    if (!contact) return;
-
-    const oldDetails = document.getElementById("details");
-
-    if (oldDetails) {
-      oldDetails.remove();
-    }
-
-    let buttons = "";
-
-    if (contact.direct) {
-      buttons += `
-        <a href="tel:${escapeHTML(contact.direct)}">
-          <button class="call-button">
-            📞 اتصال بالرقم المباشر
-          </button>
-        </a>
-      `;
-    }
-
-    if (contact.mobile) {
-      buttons += `
-        <a href="tel:${escapeHTML(contact.mobile)}">
-          <button class="mobile-button">
-            📱 اتصال بالهاتف المحمول
-          </button>
-        </a>
-
-        <a
-          href="${whatsappLink(contact.mobile)}"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <button class="whatsapp-button">
-            💬 واتساب الهاتف المحمول
-          </button>
-        </a>
-      `;
-    }
-
-    if (!buttons) {
-      buttons =
-        '<span style="color:#78869a;">لا توجد أرقام اتصال متوفرة</span>';
-    }
-
-    const card = document.createElement("div");
-
-    card.id = "details";
-    card.className = "card";
-
-    card.innerHTML = `
-      <div class="name">
-        ${escapeHTML(contact.name || "بدون اسم")}
-      </div>
-
-      <div class="job">
-        ${escapeHTML(contact.job || "غير متوفر")}
-      </div>
-
-      <div class="details">
-
-        <div class="detail">
-          <div class="detail-label">الرقم الداخلي</div>
-          <div class="detail-value">
-            ${escapeHTML(contact.internal || "غير متوفر")}
-          </div>
-        </div>
-
-        <div class="detail">
-          <div class="detail-label">الرقم المباشر</div>
-          <div class="detail-value">
-            ${escapeHTML(contact.direct || "غير متوفر")}
-          </div>
-        </div>
-
-        <div class="detail">
-          <div class="detail-label">الهاتف المحمول</div>
-          <div class="detail-value">
-            ${escapeHTML(contact.mobile || "غير متوفر")}
-          </div>
-        </div>
-
-      </div>
-
-      <div class="actions">
-        ${buttons}
-      </div>
-    `;
-
-    document.getElementById("results").appendChild(card);
-
-    card.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
-</script>
+  <script src="./script.js"></script>
+</body>
+</html>

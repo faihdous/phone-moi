@@ -1,41 +1,278 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>دليل هواتف وزارة الداخلية</title>
-  <link rel="stylesheet" href="./style.css">
-</head>
+<!-- مكتبة Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<body>
+<script>
+  /*
+    بيانات Supabase
+    استبدل القيمتين برابط المشروع و Anon Key
+  */
+  const SUPABASE_URL = "ضع_رابط_مشروعك_هنا";
+  const SUPABASE_ANON_KEY = "ضع_مفتاح_anon_هنا";
 
-  <header class="header">
-    <img src="./logo.PNG" alt="الشعار" class="logo" onerror="this.style.display='none'">
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
-    <div>
-      <h1>دليل هواتف وزارة الداخلية</h1>
-      <p>الإدارة العامة للجنسية ووثائق السفر الكويتية</p>
-    </div>
-  </header>
+  let contacts = [];
 
-  <main class="container">
+  function clean(value) {
+    return String(value ?? "")
+      .replace(/[‏\u200e\u200f]/g, "")
+      .replace(/\.0+$/, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
 
-    <input
-      type="search"
-      id="searchInput"
-      placeholder="ابحث بالاسم أو المسمى الوظيفي أو الرقم..."
-    >
+  function escapeHTML(value) {
+    return String(value || "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[char]));
+  }
 
-    <div id="status">جاري تحميل البيانات...</div>
+  function normalizeContact(contact) {
+    return {
+      id: contact.id,
+      job: clean(contact.job),
+      name: clean(contact.name),
+      internal: clean(contact.internal),
+      direct: clean(contact.direct),
+      mobile: clean(
+        contact.mobile ||
+        contact.phone ||
+        contact.mobile_number ||
+        ""
+      )
+    };
+  }
 
-    <div id="contactsList"></div>
+  function whatsappNumber(number) {
+    let value = clean(number);
 
-  </main>
+    value = value.replace(/[^\d+]/g, "");
 
-  <footer>
-    دليل جهات الاتصال
-  </footer>
+    if (value.startsWith("+")) {
+      value = value.substring(1);
+    }
 
-  <script src="./script.js"></script>
-</body>
-</html>
+    if (value.startsWith("00")) {
+      value = value.substring(2);
+    }
+
+    if (value.startsWith("965")) {
+      return value;
+    }
+
+    if (value.startsWith("0")) {
+      value = value.substring(1);
+    }
+
+    return "965" + value;
+  }
+
+  function whatsappLink(number) {
+    return "https://wa.me/" + whatsappNumber(number);
+  }
+
+  async function loadContacts() {
+    const results = document.getElementById("results");
+
+    results.innerHTML = `
+      <div class="empty">
+        جارٍ تحميل البيانات...
+      </div>
+    `;
+
+    const { data, error } = await supabaseClient
+      .from("contacts")
+      .select("*")
+      .order("name", { ascending: true });
+
+    if (error) {
+      console.error("Supabase error:", error);
+
+      results.innerHTML = `
+        <div class="empty">
+          تعذر تحميل البيانات من قاعدة البيانات
+        </div>
+      `;
+
+      return;
+    }
+
+    contacts = (data || []).map(normalizeContact);
+
+    results.innerHTML = `
+      <div class="empty">
+        اكتب اسم الشخص في خانة البحث
+      </div>
+    `;
+  }
+
+  function searchByName() {
+    const search = clean(
+      document.getElementById("searchName").value
+    ).toLowerCase();
+
+    const results = document.getElementById("results");
+
+    if (!search) {
+      results.innerHTML = `
+        <div class="empty">
+          اكتب اسم الشخص في خانة البحث
+        </div>
+      `;
+      return;
+    }
+
+    const found = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(search)
+    );
+
+    if (!found.length) {
+      results.innerHTML = `
+        <div class="empty">
+          لم يتم العثور على الاسم
+        </div>
+      `;
+      return;
+    }
+
+    results.innerHTML = found.map(contact => `
+      <div class="card">
+
+        <div class="name">
+          ${escapeHTML(contact.name || "بدون اسم")}
+        </div>
+
+        <div class="job">
+          ${escapeHTML(contact.job)}
+        </div>
+
+        <button onclick="showDetails('${contact.id}')">
+          عرض التفاصيل
+        </button>
+
+      </div>
+    `).join("");
+  }
+
+  function showDetails(id) {
+    const contact = contacts.find(item =>
+      String(item.id) === String(id)
+    );
+
+    if (!contact) {
+      return;
+    }
+
+    const oldDetails =
+      document.getElementById("details");
+
+    if (oldDetails) {
+      oldDetails.remove();
+    }
+
+    let buttons = "";
+
+    if (contact.direct) {
+      buttons += `
+        <a href="tel:${escapeHTML(contact.direct)}">
+          <button class="call-button">
+            📞 اتصال بالرقم المباشر
+          </button>
+        </a>
+      `;
+    }
+
+    if (contact.mobile) {
+      buttons += `
+        <a href="tel:${escapeHTML(contact.mobile)}">
+          <button class="mobile-button">
+            📱 اتصال بالهاتف المحمول
+          </button>
+        </a>
+
+        <a
+          href="${whatsappLink(contact.mobile)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <button class="whatsapp-button">
+            💬 واتساب الهاتف المحمول
+          </button>
+        </a>
+      `;
+    }
+
+    const card = document.createElement("div");
+
+    card.id = "details";
+    card.className = "card";
+
+    card.innerHTML = `
+      <div class="name">
+        ${escapeHTML(contact.name || "بدون اسم")}
+      </div>
+
+      <div class="job">
+        ${escapeHTML(contact.job)}
+      </div>
+
+      <div class="details">
+
+        <div class="detail">
+          <div class="detail-label">
+            الرقم الداخلي
+          </div>
+
+          <div class="detail-value">
+            ${escapeHTML(contact.internal || "غير متوفر")}
+          </div>
+        </div>
+
+        <div class="detail">
+          <div class="detail-label">
+            الرقم المباشر
+          </div>
+
+          <div class="detail-value">
+            ${escapeHTML(contact.direct || "غير متوفر")}
+          </div>
+        </div>
+
+        <div class="detail">
+          <div class="detail-label">
+            الهاتف المحمول
+          </div>
+
+          <div class="detail-value">
+            ${escapeHTML(contact.mobile || "غير متوفر")}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="actions">
+        ${buttons}
+      </div>
+    `;
+
+    document
+      .getElementById("results")
+      .appendChild(card);
+
+    card.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadContacts();
+  });
+</script>

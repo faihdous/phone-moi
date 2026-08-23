@@ -41,8 +41,7 @@
     .logo-wrapper {
       width: 145px;
       height: 145px;
-      margin: auto;
-      margin-bottom: 20px;
+      margin: 0 auto 20px;
       padding: 8px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.15);
@@ -114,6 +113,10 @@
       font-weight: 700;
     }
 
+    #searchButton:hover {
+      background: linear-gradient(135deg, #102451, #24488d);
+    }
+
     .hint {
       margin: 14px 0 28px;
       color: #78869b;
@@ -147,7 +150,7 @@
       padding: 20px;
       border: 1px solid #e2e8f2;
       border-radius: 15px;
-      background: linear-gradient(145deg, #fff, #f9fbff);
+      background: linear-gradient(145deg, #ffffff, #f9fbff);
       box-shadow: 0 4px 13px rgba(25, 48, 92, 0.08);
     }
 
@@ -302,7 +305,7 @@
     </div>
 
     <div class="hint">
-      جميع الأسماء تظهر تلقائيًا، ويمكنك استخدام البحث للتصفية
+      اكتب الاسم ثم اضغط على زر البحث لعرض التفاصيل
     </div>
 
     <h2 class="section-title">
@@ -313,7 +316,7 @@
       <div id="contactsList" class="contacts-list"></div>
 
       <div id="emptyMessage" class="empty">
-        جاري تحميل البيانات...
+        اكتب اسم الموظف ثم اضغط بحث
       </div>
     </section>
 
@@ -364,16 +367,25 @@
     }
 
 
+    function normalizeColumnName(value) {
+      return safe(value)
+        .toLowerCase()
+        .replaceAll("أ", "ا")
+        .replaceAll("إ", "ا")
+        .replaceAll("آ", "ا")
+        .replaceAll("ى", "ي")
+        .replaceAll("ة", "ه")
+        .replaceAll(" ", "")
+        .replaceAll("_", "");
+    }
+
+
     /*
-      تحديد الاسم.
-      الكود يدعم:
-      الإسم
-      الاسم
-      اسم الموظف
-      وأي عمود يحتوي على كلمة اسم أو name
+      تحديد اسم الموظف.
+      يدعم الإسم والاسم وأي عمود يحتوي على كلمة اسم.
     */
     function getName(contact) {
-      const possibleNameColumns = [
+      const exactColumns = [
         "الإسم",
         "الاسم",
         "اسم الموظف",
@@ -384,7 +396,7 @@
         "employee_name"
       ];
 
-      for (const column of possibleNameColumns) {
+      for (const column of exactColumns) {
         if (
           Object.prototype.hasOwnProperty.call(contact, column) &&
           safe(contact[column]) !== ""
@@ -394,11 +406,7 @@
       }
 
       const nameEntry = Object.entries(contact).find(([key, value]) => {
-        const columnName = safe(key)
-          .toLowerCase()
-          .replaceAll("أ", "ا")
-          .replaceAll("إ", "ا")
-          .replaceAll("آ", "ا");
+        const columnName = normalizeColumnName(key);
 
         return (
           (
@@ -414,27 +422,8 @@
 
 
     function getJobTitle(contact) {
-      const possibleJobColumns = [
-        "المسمى الوظيفي",
-        "المسمى الوظيفى",
-        "الوظيفة",
-        "المسمى",
-        "job_title",
-        "job",
-        "title"
-      ];
-
-      for (const column of possibleJobColumns) {
-        if (
-          Object.prototype.hasOwnProperty.call(contact, column) &&
-          safe(contact[column]) !== ""
-        ) {
-          return safe(contact[column]);
-        }
-      }
-
       const jobEntry = Object.entries(contact).find(([key, value]) => {
-        const columnName = safe(key).toLowerCase();
+        const columnName = normalizeColumnName(key);
 
         return (
           (
@@ -452,44 +441,44 @@
 
 
     function isNameColumn(key) {
-      const name = safe(key).toLowerCase();
+      const columnName = normalizeColumnName(key);
 
       return (
-        name.includes("اسم") ||
-        name.includes("name")
+        columnName.includes("اسم") ||
+        columnName.includes("name")
       );
     }
 
 
     function isJobColumn(key) {
-      const name = safe(key).toLowerCase();
+      const columnName = normalizeColumnName(key);
 
       return (
-        name.includes("وظيف") ||
-        name.includes("مسمى") ||
-        name.includes("job") ||
-        name.includes("title")
+        columnName.includes("وظيف") ||
+        columnName.includes("مسمى") ||
+        columnName.includes("job") ||
+        columnName.includes("title")
+      );
+    }
+
+
+    function isPhoneColumn(key) {
+      const columnName = normalizeColumnName(key);
+
+      return (
+        columnName.includes("رقم") ||
+        columnName.includes("هاتف") ||
+        columnName.includes("داخلي") ||
+        columnName.includes("مباشر") ||
+        columnName.includes("phone") ||
+        columnName.includes("tel") ||
+        columnName.includes("mobile")
       );
     }
 
 
     function isIdColumn(key) {
-      return safe(key).toLowerCase() === "id";
-    }
-
-
-    function isPhoneColumn(key) {
-      const name = safe(key).toLowerCase();
-
-      return (
-        name.includes("رقم") ||
-        name.includes("هاتف") ||
-        name.includes("داخلي") ||
-        name.includes("مباشر") ||
-        name.includes("phone") ||
-        name.includes("tel") ||
-        name.includes("mobile")
-      );
+      return normalizeColumnName(key) === "id";
     }
 
 
@@ -506,7 +495,11 @@
           return;
         }
 
-        if (isNameColumn(key) || isJobColumn(key) || isIdColumn(key)) {
+        if (
+          isNameColumn(key) ||
+          isJobColumn(key) ||
+          isIdColumn(key)
+        ) {
           return;
         }
 
@@ -550,25 +543,31 @@
     function displayContacts(contacts) {
       contactsList.innerHTML = "";
 
-      if (!contacts || contacts.length === 0) {
-        emptyMessage.className = "empty";
-        emptyMessage.textContent = "لا توجد نتائج";
-        emptyMessage.style.display = "flex";
+      /*
+        حذف أي سجل ليس لديه اسم.
+        لن تظهر بطاقة "بدون اسم" نهائيًا.
+      */
+      const contactsWithNames = contacts.filter(contact => {
+        return getName(contact) !== "";
+      });
+
+      if (contactsWithNames.length === 0) {
+        showMessage("لا توجد نتائج مطابقة");
         return;
       }
 
       emptyMessage.style.display = "none";
 
-      contacts.forEach(contact => {
-        const card = document.createElement("article");
-        card.className = "contact-card";
-
+      contactsWithNames.forEach(contact => {
         const name = getName(contact);
         const jobTitle = getJobTitle(contact);
 
+        const card = document.createElement("article");
+        card.className = "contact-card";
+
         card.innerHTML = `
           <div class="contact-name">
-            ${escapeHtml(name || "بدون اسم")}
+            ${escapeHtml(name)}
           </div>
 
           ${
@@ -590,14 +589,12 @@
 
 
     async function loadContacts() {
-      showMessage("جاري تحميل البيانات...");
+      /*
+        تحميل البيانات فقط، بدون عرضها عند فتح الصفحة.
+      */
+      showMessage("اكتب اسم الموظف ثم اضغط بحث");
 
       try {
-        /*
-          مهم:
-          لا نستخدم order("الاسم")
-          لأن اسم العمود الحقيقي هو "الإسم".
-        */
         const {
           data,
           error
@@ -611,19 +608,7 @@
 
         allContacts = Array.isArray(data) ? data : [];
 
-        console.log("البيانات القادمة من Supabase:", allContacts);
-
-        if (allContacts.length > 0) {
-          console.log(
-            "أسماء الأعمدة الفعلية:",
-            Object.keys(allContacts[0])
-          );
-        }
-
-        /*
-          عرض جميع الأسماء تلقائيًا بدون الضغط على البحث
-        */
-        displayContacts(allContacts);
+        console.log("تم تحميل البيانات من Supabase:", allContacts);
 
       } catch (error) {
         console.error("Supabase error:", error);
@@ -642,14 +627,14 @@
         searchInput.value.trim().toLowerCase();
 
       if (!searchText) {
-        displayContacts(allContacts);
+        showMessage("اكتب اسم الموظف ثم اضغط بحث");
         return;
       }
 
       const filteredContacts = allContacts.filter(contact => {
-        return getName(contact)
-          .toLowerCase()
-          .includes(searchText);
+        const name = getName(contact).toLowerCase();
+
+        return name.includes(searchText);
       });
 
       displayContacts(filteredContacts);
@@ -657,8 +642,6 @@
 
 
     searchButton.addEventListener("click", searchContacts);
-
-    searchInput.addEventListener("input", searchContacts);
 
     searchInput.addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
@@ -668,7 +651,8 @@
 
 
     /*
-      تشغيل تحميل البيانات تلقائيًا عند فتح الصفحة
+      لا يوجد input event هنا.
+      البحث لا يعمل أثناء الكتابة، فقط عند الضغط على بحث أو Enter.
     */
     loadContacts();
   </script>

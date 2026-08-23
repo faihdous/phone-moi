@@ -1,168 +1,98 @@
-* {
-  box-sizing: border-box;
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("searchInput");
+  const contactsList = document.getElementById("contactsList");
+  const statusText = document.getElementById("status");
 
-body {
-  margin: 0;
-  font-family: Arial, Tahoma, sans-serif;
-  background: #f2f5f8;
-  color: #1d2939;
-}
+  /*
+    ضع بيانات جهات الاتصال هنا
+    ويمكنك لاحقًا ربطها بقاعدة البيانات بدون تغيير التصميم
+  */
+  const contacts = [
+    {
+      job_title: "مدير الإدارة",
+      name: "مثال للاسم",
+      internal_number: "1234",
+      direct_number: "22222222",
+      mobile_number: "50000000"
+    },
+    {
+      job_title: "رئيس القسم",
+      name: "مثال آخر",
+      internal_number: "5678",
+      direct_number: "33333333",
+      mobile_number: "51111111"
+    }
+  ];
 
-.header {
-  background: linear-gradient(135deg, #063b5c, #087e8b);
-  color: white;
-  min-height: 190px;
-  padding: 30px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 25px;
-  text-align: center;
-}
+  function showContacts(data) {
+    if (!contactsList) return;
 
-.logo {
-  width: 105px;
-  height: 105px;
-  object-fit: contain;
-  background: white;
-  border-radius: 50%;
-  padding: 8px;
-}
+    contactsList.innerHTML = "";
 
-.header h1 {
-  margin: 0 0 12px;
-  font-size: 28px;
-}
+    if (data.length === 0) {
+      contactsList.innerHTML = `
+        <p class="no-results">لا توجد نتائج</p>
+      `;
 
-.header p {
-  margin: 0;
-  font-size: 16px;
-  opacity: 0.9;
-}
+      if (statusText) {
+        statusText.textContent = "لا توجد نتائج";
+      }
 
-.container {
-  width: 94%;
-  max-width: 1100px;
-  margin: 30px auto;
-}
+      return;
+    }
 
-#searchInput {
-  width: 100%;
-  padding: 16px 20px;
-  border: 1px solid #d0d5dd;
-  border-radius: 12px;
-  font-size: 17px;
-  outline: none;
-  background: white;
-  margin-bottom: 20px;
-}
+    data.forEach((contact) => {
+      const card = document.createElement("div");
 
-#searchInput:focus {
-  border-color: #087e8b;
-  box-shadow: 0 0 0 3px rgba(8, 126, 139, 0.15);
-}
+      /*
+        مهم:
+        استخدمنا نفس أسماء الكلاسات المعتادة،
+        لذلك لا نغيّر ملف style.css
+      */
+      card.className = "contact-card";
 
-#status {
-  text-align: center;
-  color: #667085;
-  margin: 15px 0;
-  font-size: 15px;
-}
+      card.innerHTML = `
+        <h3>${contact.job_title || ""}</h3>
+        <h4>${contact.name || ""}</h4>
 
-#contactsList {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-  gap: 18px;
-}
+        <div class="contact-info">
+          <span>الرقم الداخلي</span>
+          <strong>${contact.internal_number || "-"}</strong>
+        </div>
 
-.card {
-  background: white;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.08);
-  border-right: 5px solid #087e8b;
-}
+        <div class="contact-info">
+          <span>الرقم المباشر</span>
+          <strong>${contact.direct_number || "-"}</strong>
+        </div>
 
-.card h2 {
-  color: #063b5c;
-  font-size: 19px;
-  margin: 0 0 10px;
-  line-height: 1.6;
-}
+        <div class="contact-info">
+          <span>رقم الجوال</span>
+          <strong>${contact.mobile_number || "-"}</strong>
+        </div>
+      `;
 
-.card .name {
-  font-size: 17px;
-  font-weight: bold;
-  color: #344054;
-  margin-bottom: 15px;
-}
+      contactsList.appendChild(card);
+    });
 
-.info {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 9px 0;
-  border-bottom: 1px solid #eaecf0;
-  font-size: 14px;
-}
-
-.info:last-child {
-  border-bottom: none;
-}
-
-.info strong {
-  color: #667085;
-}
-
-.info span {
-  color: #101828;
-  direction: ltr;
-  text-align: left;
-  word-break: break-word;
-}
-
-.phone-link {
-  color: #087e8b !important;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.phone-link:hover {
-  text-decoration: underline;
-}
-
-.empty {
-  grid-column: 1 / -1;
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  text-align: center;
-  color: #667085;
-}
-
-footer {
-  text-align: center;
-  padding: 25px;
-  color: #667085;
-  font-size: 13px;
-}
-
-@media (max-width: 600px) {
-  .header {
-    flex-direction: column;
-    min-height: 220px;
+    if (statusText) {
+      statusText.textContent = `عدد النتائج: ${data.length}`;
+    }
   }
 
-  .header h1 {
-    font-size: 23px;
+  if (searchInput) {
+    searchInput.addEventListener("input", (event) => {
+      const searchValue = event.target.value.trim().toLowerCase();
+
+      const filteredContacts = contacts.filter((contact) => {
+        return Object.values(contact)
+          .join(" ")
+          .toLowerCase()
+          .includes(searchValue);
+      });
+
+      showContacts(filteredContacts);
+    });
   }
 
-  .header p {
-    font-size: 14px;
-  }
-
-  #contactsList {
-    grid-template-columns: 1fr;
-  }
-}
+  showContacts(contacts);
+});

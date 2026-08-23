@@ -3,26 +3,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const contactsList = document.getElementById("contactsList");
   const statusText = document.getElementById("status");
 
-  /*
-    ضع بيانات جهات الاتصال هنا
-    ويمكنك لاحقًا ربطها بقاعدة البيانات بدون تغيير التصميم
-  */
-  const contacts = [
-    {
-      job_title: "مدير الإدارة",
-      name: "مثال للاسم",
-      internal_number: "1234",
-      direct_number: "22222222",
-      mobile_number: "50000000"
-    },
-    {
-      job_title: "رئيس القسم",
-      name: "مثال آخر",
-      internal_number: "5678",
-      direct_number: "33333333",
-      mobile_number: "51111111"
-    }
-  ];
+  const SUPABASE_URL = "https://hxdpfrnxawhyanjwvlmv.supabase.co";
+  const SUPABASE_KEY =
+    "sb_publishable_TLic-BebUrdemyOnDcKnnQ_MnlLJjgH";
+
+  const TABLE_NAME = "employees";
+
+  let contacts = [];
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
   function showContacts(data) {
     if (!contactsList) return;
@@ -33,49 +29,87 @@ document.addEventListener("DOMContentLoaded", () => {
       contactsList.innerHTML = `
         <p class="no-results">لا توجد نتائج</p>
       `;
-
-      if (statusText) {
-        statusText.textContent = "لا توجد نتائج";
-      }
-
       return;
     }
 
-    data.forEach((contact) => {
+    data.forEach((employee) => {
       const card = document.createElement("div");
-
-      /*
-        مهم:
-        استخدمنا نفس أسماء الكلاسات المعتادة،
-        لذلك لا نغيّر ملف style.css
-      */
       card.className = "contact-card";
 
       card.innerHTML = `
-        <h3>${contact.job_title || ""}</h3>
-        <h4>${contact.name || ""}</h4>
+        <h3>${escapeHTML(employee.name)}</h3>
 
-        <div class="contact-info">
-          <span>الرقم الداخلي</span>
-          <strong>${contact.internal_number || "-"}</strong>
-        </div>
+        <p class="job-title">
+          ${escapeHTML(employee.job_title)}
+        </p>
 
-        <div class="contact-info">
-          <span>الرقم المباشر</span>
-          <strong>${contact.direct_number || "-"}</strong>
-        </div>
+        <div class="contact-details">
+          <p>
+            <strong>الرقم الداخلي:</strong>
+            ${escapeHTML(employee.internal_number)}
+          </p>
 
-        <div class="contact-info">
-          <span>رقم الجوال</span>
-          <strong>${contact.mobile_number || "-"}</strong>
+          <p>
+            <strong>الرقم المباشر:</strong>
+            ${escapeHTML(employee.direct_number)}
+          </p>
+
+          <p>
+            <strong>رقم الجوال:</strong>
+            ${escapeHTML(employee.mobile_number)}
+          </p>
         </div>
       `;
 
       contactsList.appendChild(card);
     });
+  }
 
-    if (statusText) {
-      statusText.textContent = `عدد النتائج: ${data.length}`;
+  async function loadContacts() {
+    try {
+      if (statusText) {
+        statusText.textContent = "جاري تحميل بيانات الموظفين...";
+      }
+
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*`,
+        {
+          method: "GET",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(errorData);
+      }
+
+      contacts = await response.json();
+      showContacts(contacts);
+
+      if (statusText) {
+        statusText.textContent =
+          `تم تحميل ${contacts.length} جهة اتصال`;
+      }
+    } catch (error) {
+      console.error("Supabase error:", error);
+
+      if (contactsList) {
+        contactsList.innerHTML = `
+          <p class="no-results">
+            تعذر تحميل بيانات الموظفين
+          </p>
+        `;
+      }
+
+      if (statusText) {
+        statusText.textContent =
+          "تأكد من إعداد صلاحيات جدول employees في Supabase";
+      }
     }
   }
 
@@ -83,16 +117,26 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", (event) => {
       const searchValue = event.target.value.trim().toLowerCase();
 
-      const filteredContacts = contacts.filter((contact) => {
-        return Object.values(contact)
-          .join(" ")
-          .toLowerCase()
-          .includes(searchValue);
+      const filteredContacts = contacts.filter((employee) => {
+        return [
+          employee.name,
+          employee.job_title,
+          employee.internal_number,
+          employee.direct_number,
+          employee.mobile_number
+        ].some((value) =>
+          String(value ?? "").toLowerCase().includes(searchValue)
+        );
       });
 
       showContacts(filteredContacts);
+
+      if (statusText) {
+        statusText.textContent =
+          `عدد النتائج: ${filteredContacts.length}`;
+      }
     });
   }
 
-  showContacts(contacts);
+  loadContacts();
 });

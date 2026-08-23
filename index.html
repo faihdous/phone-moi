@@ -1,92 +1,67 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>دليل أرقام الهواتف</title>
 
-  <!-- خط عربي -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- مكتبة Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --main-blue: #1d3268;
-      --dark-blue: #172a5a;
-      --light-background: #f4f6fb;
-      --text-color: #17346f;
-      --gray-text: #71809a;
-      --white: #ffffff;
-      --border: #e4e8f0;
-      --shadow: 0 8px 25px rgba(35, 53, 91, 0.10);
-    }
-
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      background: var(--light-background);
-      color: var(--text-color);
-      font-family: "Cairo", Arial, sans-serif;
+      background: #f4f6fb;
+      color: #17346f;
+      font-family: Cairo, Arial, sans-serif;
     }
 
     .header {
       min-height: 548px;
-      background: linear-gradient(135deg, #192d61, #233d79);
-      color: white;
+      padding: 35px 20px 45px;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 35px 20px 50px;
+      color: white;
+      background: linear-gradient(135deg, #192d61, #233d79);
     }
 
     .header-content {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1100px;
     }
 
-    .logo {
-      width: 285px;
-      height: 285px;
-      object-fit: contain;
-      display: block;
-      margin: 0 auto 10px;
-    }
-
-    .logo-fallback {
+    .logo-circle {
       width: 230px;
       height: 230px;
-      margin: 0 auto 20px;
+      margin: 0 auto 22px;
       border: 4px solid white;
       border-radius: 50%;
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-weight: 700;
+      padding: 25px;
       font-size: 22px;
-      padding: 20px;
+      font-weight: 700;
+      line-height: 1.8;
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(42px, 6vw, 76px);
+      font-size: clamp(40px, 6vw, 76px);
       font-weight: 800;
-      line-height: 1.35;
+      line-height: 1.4;
     }
 
     .subtitle {
       margin: 12px 0 0;
-      font-size: clamp(22px, 3vw, 36px);
-      font-weight: 500;
+      font-size: clamp(20px, 3vw, 35px);
     }
 
     .container {
@@ -100,112 +75,70 @@
       grid-template-columns: 1fr 340px;
       gap: 24px;
       direction: ltr;
-      align-items: stretch;
+    }
+
+    .search-box,
+    .results {
+      background: white;
+      border-radius: 26px;
+      box-shadow: 0 8px 25px rgba(35, 53, 91, .1);
     }
 
     .search-box {
-      direction: rtl;
-      background: var(--white);
       min-height: 145px;
-      border-radius: 26px;
-      box-shadow: var(--shadow);
+      padding: 25px 38px;
       display: flex;
       align-items: center;
-      padding: 25px 38px;
+      direction: rtl;
     }
 
-    .search-box input {
+    #searchInput {
       width: 100%;
       border: 0;
       outline: 0;
+      background: transparent;
+      text-align: right;
+      color: #5f6f87;
       font-family: inherit;
       font-size: 30px;
-      color: #5f6f87;
-      text-align: right;
-      background: transparent;
     }
 
-    .search-box input::placeholder {
+    #searchInput::placeholder {
       color: #7d899b;
-      opacity: 1;
     }
 
-    .search-button {
-      direction: rtl;
+    #searchButton {
       min-height: 145px;
       border: 0;
       border-radius: 26px;
-      background: var(--main-blue);
+      background: #1d3268;
       color: white;
+      cursor: pointer;
       font-family: inherit;
       font-size: 31px;
-      cursor: pointer;
-      transition: 0.2s ease;
-      box-shadow: var(--shadow);
+      transition: .2s;
     }
 
-    .search-button:hover {
+    #searchButton:hover {
       background: #294585;
-      transform: translateY(-2px);
-    }
-
-    .search-button:active {
-      transform: translateY(0);
     }
 
     .hint {
-      text-align: center;
-      color: var(--gray-text);
-      font-size: 24px;
       margin: 22px 0 38px;
+      text-align: center;
+      color: #71809a;
+      font-size: 24px;
     }
 
     .section-title {
-      color: var(--text-color);
+      margin: 0 0 24px;
       font-size: 42px;
       font-weight: 800;
-      margin: 0 0 24px;
-    }
-
-    .status {
-      display: none;
-      background: #fff8df;
-      color: #765d00;
-      border: 1px solid #f1df94;
-      border-radius: 14px;
-      padding: 16px 20px;
-      margin-bottom: 20px;
-      font-size: 18px;
-      text-align: center;
-    }
-
-    .status.error {
-      display: block;
-      background: #fff0f0;
-      color: #a62828;
-      border-color: #f0bcbc;
-    }
-
-    .status.show {
-      display: block;
     }
 
     .results {
-      background: var(--white);
       min-height: 180px;
-      border-radius: 26px;
-      box-shadow: var(--shadow);
       padding: 30px;
-    }
-
-    .empty-state {
-      min-height: 120px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #8390a7;
-      font-size: 25px;
-      text-align: center;
     }
 
     .contacts-list {
@@ -215,40 +148,32 @@
     }
 
     .contact-card {
-      border: 1px solid var(--border);
-      border-radius: 18px;
       padding: 22px;
-      background: #fff;
-      transition: 0.2s ease;
-    }
-
-    .contact-card:hover {
-      box-shadow: 0 5px 18px rgba(28, 50, 104, 0.12);
-      border-color: #c8d2e7;
-      transform: translateY(-2px);
+      border: 1px solid #e4e8f0;
+      border-radius: 18px;
+      background: white;
     }
 
     .contact-name {
-      color: var(--main-blue);
+      margin-bottom: 12px;
+      color: #1d3268;
       font-size: 24px;
       font-weight: 800;
-      margin-bottom: 14px;
-      word-break: break-word;
     }
 
     .job-title {
+      margin-bottom: 14px;
       color: #78869d;
       font-size: 17px;
-      margin-bottom: 15px;
     }
 
     .phone-row {
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      border-top: 1px solid #edf0f5;
       padding-top: 10px;
       margin-top: 10px;
+      border-top: 1px solid #edf0f5;
       font-size: 17px;
     }
 
@@ -257,34 +182,32 @@
     }
 
     .phone-number {
-      color: #1c3978;
-      font-weight: 700;
       direction: ltr;
       text-align: left;
+      color: #1c3978;
+      font-weight: 700;
     }
 
-    .loading {
-      color: #71809a;
-      font-size: 23px;
+    .empty {
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8390a7;
       text-align: center;
-      padding: 25px;
+      font-size: 25px;
     }
 
     .footer {
-      text-align: center;
-      color: #8994a8;
-      font-size: 16px;
       padding: 0 20px 30px;
+      color: #8994a8;
+      text-align: center;
+      font-size: 16px;
     }
 
     @media (max-width: 900px) {
       .header {
-        min-height: 440px;
-      }
-
-      .logo {
-        width: 210px;
-        height: 210px;
+        min-height: 430px;
       }
 
       .search-area {
@@ -292,15 +215,12 @@
         direction: rtl;
       }
 
-      .search-button {
-        min-height: 85px;
+      .search-box,
+      #searchButton {
+        min-height: 100px;
       }
 
-      .search-box {
-        min-height: 105px;
-      }
-
-      .search-box input {
+      #searchInput {
         font-size: 23px;
       }
 
@@ -319,14 +239,10 @@
         margin: 25px auto;
       }
 
-      .header {
-        min-height: 390px;
-        padding-top: 25px;
-      }
-
-      .logo {
+      .logo-circle {
         width: 170px;
         height: 170px;
+        font-size: 17px;
       }
 
       h1 {
@@ -356,65 +272,48 @@
 
   <header class="header">
     <div class="header-content">
-
-      <!-- ضع ملف الشعار باسم logo.png بجانب index.html -->
-      <img
-        src="logo.png"
-        alt="شعار الجهة"
-        class="logo"
-        onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='flex';"
-      >
-
-      <div class="logo-fallback">
-        شعار الجهة
+      <div class="logo-circle">
+        الجنسية والجوازات<br>
+        Kuwait Police
       </div>
 
       <h1>دليل أرقام الهواتف</h1>
 
-      <p class="subtitle">
+      <div class="subtitle">
         الإدارة العامة للجنسية ووثائق السفر الكويتية
-      </p>
+      </div>
     </div>
   </header>
 
   <main class="container">
 
-    <section class="search-area">
+    <div class="search-area">
       <div class="search-box">
         <input
           id="searchInput"
           type="text"
           placeholder="إبحث بالاسم فقط..."
-          autocomplete="off"
-        />
+        >
       </div>
 
-      <button id="searchButton" class="search-button">
+      <button id="searchButton">
         بحث 🔍
       </button>
-    </section>
+    </div>
 
-    <p class="hint">
+    <div class="hint">
       اكتب الاسم ثم اضغط بحث لعرض التفاصيل
-    </p>
+    </div>
 
-    <div id="statusMessage" class="status"></div>
-
-    <h2 class="section-title">
-      قائمة الأسماء
-    </h2>
+    <h2 class="section-title">قائمة الأسماء</h2>
 
     <section class="results">
-      <div id="loading" class="loading">
-        جارٍ تحميل البيانات...
-      </div>
-
-      <div id="emptyState" class="empty-state" style="display: none;">
+      <div id="contactsList" class="contacts-list"></div>
+      <div id="emptyMessage" class="empty">
         لا توجد بيانات حالياً، أضف الأسماء من قسم الإدارة
       </div>
-
-      <div id="contactsList" class="contacts-list"></div>
     </section>
+
   </main>
 
   <footer class="footer">
@@ -422,188 +321,103 @@
   </footer>
 
   <script>
-    /*
-      =====================================================
-      ضع بيانات Supabase هنا
-      =====================================================
-    */
+    const contacts = [
+      /*
+        أضف بياناتك بهذا الشكل:
 
-    const SUPABASE_URL = "ضع_رابط_مشروعك_هنا";
-    const SUPABASE_ANON_KEY = "ضع_مفتاح_anon_هنا";
-
-    /*
-      لا تعدّل ما تحت هذا السطر
-    */
+        {
+          name: "الاسم",
+          job_title: "المسمى الوظيفي",
+          internal_number: "1234",
+          direct_number: "22500000",
+          mobile_number: "50000000"
+        }
+      */
+    ];
 
     const searchInput = document.getElementById("searchInput");
     const searchButton = document.getElementById("searchButton");
     const contactsList = document.getElementById("contactsList");
-    const emptyState = document.getElementById("emptyState");
-    const loading = document.getElementById("loading");
-    const statusMessage = document.getElementById("statusMessage");
+    const emptyMessage = document.getElementById("emptyMessage");
 
-    let allContacts = [];
-
-    let supabaseClient = null;
-
-    function showError(message) {
-      statusMessage.textContent = message;
-      statusMessage.className = "status error";
-    }
-
-    function hideStatus() {
-      statusMessage.textContent = "";
-      statusMessage.className = "status";
-    }
-
-    function clean(value) {
-      return value === null || value === undefined
-        ? ""
-        : String(value).trim();
+    function safe(value) {
+      return value == null ? "" : String(value);
     }
 
     function escapeHtml(value) {
-      return clean(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+      return safe(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
-    function renderContacts(contacts) {
+    function displayContacts(list) {
       contactsList.innerHTML = "";
 
-      if (!contacts || contacts.length === 0) {
-        emptyState.style.display = "flex";
+      if (!list.length) {
+        emptyMessage.style.display = "flex";
         return;
       }
 
-      emptyState.style.display = "none";
+      emptyMessage.style.display = "none";
 
-      contactsList.innerHTML = contacts.map(contact => {
-        const name = clean(contact.name) || "بدون اسم";
-        const jobTitle = clean(contact.job_title);
+      list.forEach(contact => {
+        const card = document.createElement("article");
+        card.className = "contact-card";
 
-        return `
-          <article class="contact-card">
-            <div class="contact-name">
-              ${escapeHtml(name)}
-            </div>
+        card.innerHTML = `
+          <div class="contact-name">
+            ${escapeHtml(contact.name || "بدون اسم")}
+          </div>
 
-            ${
-              jobTitle
-                ? `<div class="job-title">${escapeHtml(jobTitle)}</div>`
-                : ""
-            }
+          ${
+            contact.job_title
+              ? `<div class="job-title">${escapeHtml(contact.job_title)}</div>`
+              : ""
+          }
 
-            ${
-              clean(contact.internal_number)
-                ? `
-                  <div class="phone-row">
-                    <span class="phone-label">الرقم الداخلي</span>
-                    <span class="phone-number">
-                      ${escapeHtml(contact.internal_number)}
-                    </span>
-                  </div>
-                `
-                : ""
-            }
+          ${
+            contact.internal_number
+              ? `<div class="phone-row">
+                  <span class="phone-label">الرقم الداخلي</span>
+                  <span class="phone-number">${escapeHtml(contact.internal_number)}</span>
+                </div>`
+              : ""
+          }
 
-            ${
-              clean(contact.direct_number)
-                ? `
-                  <div class="phone-row">
-                    <span class="phone-label">الرقم المباشر</span>
-                    <span class="phone-number">
-                      ${escapeHtml(contact.direct_number)}
-                    </span>
-                  </div>
-                `
-                : ""
-            }
+          ${
+            contact.direct_number
+              ? `<div class="phone-row">
+                  <span class="phone-label">الرقم المباشر</span>
+                  <span class="phone-number">${escapeHtml(contact.direct_number)}</span>
+                </div>`
+              : ""
+          }
 
-            ${
-              clean(contact.mobile_number)
-                ? `
-                  <div class="phone-row">
-                    <span class="phone-label">رقم الهاتف</span>
-                    <span class="phone-number">
-                      ${escapeHtml(contact.mobile_number)}
-                    </span>
-                  </div>
-                `
-                : ""
-            }
-          </article>
+          ${
+            contact.mobile_number
+              ? `<div class="phone-row">
+                  <span class="phone-label">رقم الهاتف</span>
+                  <span class="phone-number">${escapeHtml(contact.mobile_number)}</span>
+                </div>`
+              : ""
+          }
         `;
-      }).join("");
-    }
 
-    async function loadContacts() {
-      loading.style.display = "block";
-      emptyState.style.display = "none";
-      contactsList.innerHTML = "";
-      hideStatus();
-
-      if (
-        SUPABASE_URL.includes("ضع_") ||
-        SUPABASE_ANON_KEY.includes("ضع_")
-      ) {
-        loading.style.display = "none";
-        showError("أدخل رابط Supabase ومفتاح anon داخل الكود أولاً.");
-        emptyState.textContent = "لم يتم ربط الموقع بقاعدة البيانات بعد";
-        emptyState.style.display = "flex";
-        return;
-      }
-
-      try {
-        supabaseClient = window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_ANON_KEY
-        );
-
-        const { data, error } = await supabaseClient
-          .from("contacts")
-          .select("*")
-          .order("name", { ascending: true });
-
-        if (error) {
-          throw error;
-        }
-
-        allContacts = data || [];
-        renderContacts(allContacts);
-
-      } catch (error) {
-        console.error("Supabase Error:", error);
-
-        showError(
-          "حدث خطأ أثناء تحميل البيانات. تأكد من رابط Supabase والمفتاح واسم الجدول والصلاحيات."
-        );
-
-        emptyState.textContent = "تعذر تحميل بيانات الأسماء";
-        emptyState.style.display = "flex";
-
-      } finally {
-        loading.style.display = "none";
-      }
+        contactsList.appendChild(card);
+      });
     }
 
     function searchContacts() {
-      const searchText = clean(searchInput.value).toLowerCase();
+      const text = searchInput.value.trim().toLowerCase();
 
-      if (!searchText) {
-        renderContacts(allContacts);
-        return;
-      }
+      const filtered = contacts.filter(contact =>
+        safe(contact.name).toLowerCase().includes(text)
+      );
 
-      const filteredContacts = allContacts.filter(contact => {
-        const name = clean(contact.name).toLowerCase();
-        return name.includes(searchText);
-      });
-
-      renderContacts(filteredContacts);
+      displayContacts(filtered);
     }
 
     searchButton.addEventListener("click", searchContacts);
@@ -614,13 +428,7 @@
       }
     });
 
-    searchInput.addEventListener("input", function() {
-      if (clean(searchInput.value) === "") {
-        renderContacts(allContacts);
-      }
-    });
-
-    loadContacts();
+    displayContacts(contacts);
   </script>
 
 </body>

@@ -13,12 +13,11 @@
 
   <title>دليل أرقام الهواتف</title>
 
-  <!-- مكتبة Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- الخط -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
     rel="stylesheet">
 
@@ -46,9 +45,11 @@
       margin: 0;
       min-width: 320px;
       background:
-        radial-gradient(circle at top right,
+        radial-gradient(
+          circle at top right,
           rgba(42, 72, 135, 0.08),
-          transparent 35%),
+          transparent 35%
+        ),
         var(--background);
       color: var(--text);
       font-family: "Cairo", Arial, sans-serif;
@@ -77,10 +78,12 @@
       color: #fff;
       text-align: center;
       background:
-        linear-gradient(135deg,
+        linear-gradient(
+          135deg,
           #112554 0%,
           #1d3976 55%,
-          #2c4c91 100%);
+          #2c4c91 100%
+        );
     }
 
     .header::before {
@@ -249,8 +252,7 @@
       padding: 0 4px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      justify-content: flex-start;
       margin-bottom: 15px;
     }
 
@@ -261,24 +263,7 @@
       font-weight: 800;
     }
 
-    #refreshButton {
-      padding: 10px 15px;
-      border: 0;
-      border-radius: 12px;
-      background: #e9eef9;
-      color: #1b3978;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 700;
-      transition: 0.2s ease;
-    }
-
-    #refreshButton:hover {
-      background: #dce5f7;
-      transform: translateY(-1px);
-    }
-
-    /* النتائج */
+    /* صندوق النتائج */
 
     .results {
       min-height: 190px;
@@ -402,7 +387,7 @@
       line-height: 1.8;
     }
 
-    /* الآيفون والأجهزة الصغيرة */
+    /* الجوال */
 
     @media (max-width: 700px) {
       .header {
@@ -462,20 +447,11 @@
       }
 
       .section-header {
-        align-items: flex-start;
-        flex-direction: column;
         margin-bottom: 12px;
       }
 
       .section-title {
         font-size: 26px;
-      }
-
-      #refreshButton {
-        width: 100%;
-        min-height: 42px;
-        padding: 8px 12px;
-        font-size: 13px;
       }
 
       .results {
@@ -523,16 +499,15 @@
 <body>
 
   <!-- الهيدر -->
+
   <header class="header">
     <div class="header-content">
 
-      <!-- يجب وضع logo.png بجانب index.html -->
       <div class="logo-wrapper">
         <img
-          src="logo.PNG"
+          src="logo.png"
           alt="شعار الإدارة العامة للجنسية ووثائق السفر"
-          class="official-logo"
-        >
+          class="official-logo">
       </div>
 
       <h1>دليل أرقام الهواتف</h1>
@@ -545,9 +520,11 @@
   </header>
 
   <!-- المحتوى -->
+
   <main class="container">
 
     <!-- البحث -->
+
     <div class="search-area">
 
       <div class="search-box">
@@ -558,8 +535,7 @@
           autocomplete="off"
           autocapitalize="none"
           placeholder="إبحث بالاسم فقط..."
-          aria-label="البحث بالاسم"
-        >
+          aria-label="البحث بالاسم">
       </div>
 
       <button id="searchButton" type="button">
@@ -573,15 +549,15 @@
     </div>
 
     <!-- عنوان القائمة -->
-    <div class="section-header">
-      <h2 class="section-title">قائمة الأسماء</h2>
 
-      <button id="refreshButton" type="button">
-        تحديث البيانات ↻
-      </button>
+    <div class="section-header">
+      <h2 class="section-title">
+        قائمة الأسماء
+      </h2>
     </div>
 
     <!-- النتائج -->
+
     <section class="results">
       <div id="contactsList" class="contacts-list"></div>
 
@@ -599,33 +575,25 @@
   <script>
     /*
       إعدادات Supabase
+      أبقِ بياناتك الحالية كما هي
     */
 
     const SUPABASE_URL =
-      "https://hxdpfrnxawhyanjwvlmv.supabase.co";
-
-    /*
-      ضع هنا Publishable key أو anon public key
-      من Supabase > Project Settings > API
-    */
+      "ضع_رابط_مشروع_Supabase_هنا";
 
     const SUPABASE_ANON_KEY =
       "ضع_المفتاح_العام_هنا";
-
-    /*
-      اسم جدول Supabase
-    */
 
     const TABLE_NAME = "contacts";
 
 
     const searchInput = document.getElementById("searchInput");
     const searchButton = document.getElementById("searchButton");
-    const refreshButton = document.getElementById("refreshButton");
     const contactsList = document.getElementById("contactsList");
     const emptyMessage = document.getElementById("emptyMessage");
 
     let allContacts = [];
+
 
     const supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
@@ -701,6 +669,7 @@
 
       contacts.forEach(contact => {
         const card = document.createElement("article");
+
         card.className = "contact-card";
 
         card.innerHTML = `
@@ -759,7 +728,7 @@
 
         showMessage(
           "تعذر تحميل البيانات.<br>" +
-          "تأكد من المفتاح واسم الجدول وصلاحيات القراءة.",
+          "تأكد من الاتصال بقاعدة البيانات.",
           "error"
         );
       }
@@ -786,7 +755,6 @@
 
     searchButton.addEventListener("click", searchContacts);
 
-    refreshButton.addEventListener("click", loadContacts);
 
     searchInput.addEventListener("keydown", event => {
       if (event.key === "Enter") {
@@ -794,15 +762,12 @@
       }
     });
 
-    /*
-      البحث أثناء الكتابة
-    */
 
     searchInput.addEventListener("input", searchContacts);
 
 
     /*
-      تحميل البيانات عند فتح الموقع
+      تحميل البيانات تلقائياً عند فتح الموقع
     */
 
     loadContacts();

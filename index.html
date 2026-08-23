@@ -498,8 +498,6 @@
 
 <body>
 
-  <!-- الهيدر -->
-
   <header class="header">
     <div class="header-content">
 
@@ -519,11 +517,8 @@
     </div>
   </header>
 
-  <!-- المحتوى -->
 
   <main class="container">
-
-    <!-- البحث -->
 
     <div class="search-area">
 
@@ -548,7 +543,6 @@
       اكتب الاسم ثم اضغط بحث لعرض التفاصيل
     </div>
 
-    <!-- عنوان القائمة -->
 
     <div class="section-header">
       <h2 class="section-title">
@@ -556,7 +550,6 @@
       </h2>
     </div>
 
-    <!-- النتائج -->
 
     <section class="results">
       <div id="contactsList" class="contacts-list"></div>
@@ -568,22 +561,20 @@
 
   </main>
 
+
   <footer class="footer">
     دليل أرقام الهواتف - الإدارة العامة للجنسية ووثائق السفر الكويتية
   </footer>
 
-  <script>
-    /*
-      إعدادات Supabase
-    */
 
+  <script>
     const SUPABASE_URL =
       "https://hxdpfrnxawhyanjwvlmv.supabase.co";
 
     const SUPABASE_ANON_KEY =
       "sb_publishable_TLic-BebUrdemyOnDcKnnQ_MnlLJjgH";
 
-    const TABLE_NAME = "contacts";
+    const TABLE_NAME = "employees";
 
 
     const searchInput = document.getElementById("searchInput");
@@ -673,22 +664,22 @@
 
         card.innerHTML = `
           <div class="contact-name">
-            ${escapeHtml(contact.name || "بدون اسم")}
+            ${escapeHtml(contact["الاسم"] || "بدون اسم")}
           </div>
 
           ${
-            safe(contact.job_title).trim()
+            safe(contact["المسمى الوظيفي"]).trim()
               ? `
                 <div class="job-title">
-                  ${escapeHtml(contact.job_title)}
+                  ${escapeHtml(contact["المسمى الوظيفي"])}
                 </div>
               `
               : ""
           }
 
-          ${phoneRow("الرقم الداخلي", contact.internal_number)}
-          ${phoneRow("الرقم المباشر", contact.direct_number)}
-          ${phoneRow("رقم الهاتف", contact.mobile_number)}
+          ${phoneRow("الرقم الداخلي", contact["الرقم الداخلي"])}
+          ${phoneRow("الرقم المباشر", contact["الرقم المباشر"])}
+          ${phoneRow("رقم الهاتف", contact["رقم الهاتف"])}
         `;
 
         contactsList.appendChild(card);
@@ -706,7 +697,7 @@
         } = await supabaseClient
           .from(TABLE_NAME)
           .select("*")
-          .order("name", {
+          .order("الاسم", {
             ascending: true
           });
 
@@ -727,7 +718,7 @@
 
         showMessage(
           "تعذر تحميل البيانات.<br>" +
-          "تأكد من الاتصال بقاعدة البيانات.",
+          "تأكد من صلاحيات قراءة جدول employees وبيانات Supabase.",
           "error"
         );
       }
@@ -743,7 +734,7 @@
       }
 
       const filteredContacts = allContacts.filter(contact => {
-        const name = safe(contact.name).toLowerCase();
+        const name = safe(contact["الاسم"]).toLowerCase();
 
         return name.includes(searchText);
       });
@@ -764,10 +755,6 @@
 
     searchInput.addEventListener("input", searchContacts);
 
-
-    /*
-      تحميل البيانات تلقائياً عند فتح الموقع
-    */
 
     loadContacts();
   </script>

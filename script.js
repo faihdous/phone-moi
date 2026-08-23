@@ -3,7 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const contactsList = document.getElementById("contactsList");
   const statusText = document.getElementById("status");
 
-  const SUPABASE_URL = "https://hxdpfrnxawhyanjwvlmv.supabase.co";
+  const SUPABASE_URL =
+    "https://hxdpfrnxawhyanjwvlmv.supabase.co";
+
   const SUPABASE_KEY =
     "sb_publishable_TLic-BebUrdemyOnDcKnnQ_MnlLJjgH";
 
@@ -34,30 +36,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     data.forEach((employee) => {
       const card = document.createElement("div");
+
       card.className = "contact-card";
 
       card.innerHTML = `
-        <h3>${escapeHTML(employee.name)}</h3>
+        <h3>
+          ${escapeHTML(employee["الاسم"])}
+        </h3>
 
         <p class="job-title">
-          ${escapeHTML(employee.job_title)}
+          ${escapeHTML(employee["المسمى الوظيفي"])}
         </p>
 
         <div class="contact-details">
+
           <p>
             <strong>الرقم الداخلي:</strong>
-            ${escapeHTML(employee.internal_number)}
+            ${escapeHTML(employee["الرقم الداخلي"])}
           </p>
 
           <p>
             <strong>الرقم المباشر:</strong>
-            ${escapeHTML(employee.direct_number)}
+            ${escapeHTML(employee["المباشر"])}
           </p>
 
           <p>
             <strong>رقم الجوال:</strong>
-            ${escapeHTML(employee.mobile_number)}
+            ${escapeHTML(employee["الجوال"])}
           </p>
+
         </div>
       `;
 
@@ -68,7 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadContacts() {
     try {
       if (statusText) {
-        statusText.textContent = "جاري تحميل بيانات الموظفين...";
+        statusText.textContent =
+          "جاري تحميل بيانات الموظفين...";
       }
 
       const response = await fetch(
@@ -89,6 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       contacts = await response.json();
+
       showContacts(contacts);
 
       if (statusText) {
@@ -115,17 +124,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (searchInput) {
     searchInput.addEventListener("input", (event) => {
-      const searchValue = event.target.value.trim().toLowerCase();
+      const searchValue =
+        event.target.value.trim().toLowerCase();
 
       const filteredContacts = contacts.filter((employee) => {
         return [
-          employee.name,
-          employee.job_title,
-          employee.internal_number,
-          employee.direct_number,
-          employee.mobile_number
+          employee["الاسم"],
+          employee["المسمى الوظيفي"],
+          employee["الرقم الداخلي"],
+          employee["المباشر"],
+          employee["الجوال"]
         ].some((value) =>
-          String(value ?? "").toLowerCase().includes(searchValue)
+          String(value ?? "")
+            .toLowerCase()
+            .includes(searchValue)
         );
       });
 

@@ -31,8 +31,8 @@
       min-height: 370px;
       padding: 35px 20px 70px;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       color: white;
       text-align: center;
       background: linear-gradient(135deg, #172b5d, #40599a);
@@ -56,14 +56,14 @@
 
     h1 {
       margin: 0;
-      color: #fff;
+      color: white;
       font-size: clamp(32px, 6vw, 60px);
       font-weight: 800;
     }
 
     .subtitle {
       margin-top: 10px;
-      color: #fff;
+      color: white;
       font-size: clamp(16px, 2.5vw, 25px);
     }
 
@@ -80,7 +80,7 @@
       gap: 8px;
       padding: 8px;
       border-radius: 18px;
-      background: #fff;
+      background: white;
       box-shadow: 0 12px 30px rgba(20, 42, 85, 0.16);
     }
 
@@ -102,15 +102,11 @@
       text-align: right;
     }
 
-    #searchInput::placeholder {
-      color: #888;
-    }
-
     #searchButton {
       min-height: 62px;
       border: 0;
       border-radius: 13px;
-      color: #fff;
+      color: white;
       background: linear-gradient(135deg, #17346f, #31569d);
       cursor: pointer;
       font-family: inherit;
@@ -140,7 +136,7 @@
       padding: 18px;
       border: 1px solid #e2e8f2;
       border-radius: 18px;
-      background: #fff;
+      background: white;
       box-shadow: 0 7px 22px rgba(28, 50, 93, 0.07);
     }
 
@@ -208,13 +204,13 @@
       overflow-wrap: anywhere;
     }
 
-    .phone-value {
-      direction: ltr;
-    }
-
-    .phone-value a {
+    .data-value a {
       color: #1c3978;
       text-decoration: none;
+    }
+
+    .phone-value {
+      direction: ltr;
     }
 
     .empty {
@@ -391,10 +387,6 @@
     }
 
 
-    /*
-      اسم العمود الموجود عندك هو: الاسم
-      ويدعم أيضًا: الإسم
-    */
     function getName(contact) {
       const possibleNameColumns = [
         "الاسم",
@@ -496,17 +488,46 @@
     }
 
 
-    function isPhoneColumn(key) {
+    /*
+      تحديد الهاتف النقال.
+      يدعم:
+      الهاتف المحمول
+      الهاتف النقال
+      الجوال
+      المحمول
+      mobile
+      phone
+    */
+    function isMobileColumn(key) {
       const columnName = normalizeColumnName(key);
 
       return (
-        columnName.includes("رقم") ||
-        columnName.includes("هاتف") ||
-        columnName.includes("داخلي") ||
-        columnName.includes("مباشر") ||
-        columnName.includes("phone") ||
-        columnName.includes("tel") ||
+        columnName.includes("نقال") ||
+        columnName.includes("جوال") ||
+        columnName.includes("محمول") ||
+        columnName.includes("موبايل") ||
         columnName.includes("mobile")
+      );
+    }
+
+
+    /*
+      تحديد الرقم المباشر والهاتف الأرضي.
+      أي رقم ليس نقالًا ويحتوي على:
+      مباشر أو داخلي أو هاتف أو تلفون أو tel
+      سيتم تحويله إلى اتصال هاتفي.
+    */
+    function isLandlineColumn(key) {
+      const columnName = normalizeColumnName(key);
+
+      return (
+        columnName.includes("مباشر") ||
+        columnName.includes("داخلي") ||
+        columnName.includes("هاتف") ||
+        columnName.includes("تلفون") ||
+        columnName.includes("ارض") ||
+        columnName.includes("tel") ||
+        columnName.includes("phone")
       );
     }
 
@@ -532,9 +553,6 @@
           return;
         }
 
-        /*
-          لا نكرر الاسم أو المسمى الوظيفي داخل التفاصيل
-        */
         if (
           isNameColumn(key) ||
           isJobColumn(key) ||
@@ -543,28 +561,64 @@
           return;
         }
 
-        const label = escapeHtml(key);
+        const cleanKey = normalizeColumnName(key);
+        const phone = normalizePhone(value);
         const text = escapeHtml(value);
 
-        if (isPhoneColumn(key)) {
-          const phone = normalizePhone(value);
-
+        /*
+          الهاتف النقال:
+          يظهر معه إيموجي واتساب
+          ويفتح محادثة واتساب مباشرة
+        */
+        if (isMobileColumn(key)) {
           rows.push(`
             <div class="data-row">
-              <span class="data-label">${label}</span>
+              <span class="data-label">📱 ${escapeHtml(key)}</span>
+
               <span class="data-value phone-value">
-                <a href="tel:${escapeHtml(phone)}">${text}</a>
+                <a
+                  href="https://wa.me/${phone}"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  ${text} 🟢
+                </a>
               </span>
             </div>
           `);
-        } else {
+
+          return;
+        }
+
+        /*
+          الرقم المباشر أو الأرضي:
+          يظهر معه إيموجي هاتف أرضي
+          ويفتح تطبيق الاتصال
+        */
+        if (isLandlineColumn(key)) {
           rows.push(`
             <div class="data-row">
-              <span class="data-label">${label}</span>
-              <span class="data-value">${text}</span>
+              <span class="data-label">☎️ ${escapeHtml(key)}</span>
+
+              <span class="data-value phone-value">
+                <a href="tel:${phone}">
+                  ${text}
+                </a>
+              </span>
             </div>
           `);
+
+          return;
         }
+
+        /*
+          باقي البيانات تظهر بشكل عادي
+        */
+        rows.push(`
+          <div class="data-row">
+            <span class="data-label">${escapeHtml(key)}</span>
+            <span class="data-value">${text}</span>
+          </div>
+        `);
       });
 
       return rows.join("");
@@ -575,7 +629,7 @@
       contactsList.innerHTML = "";
 
       /*
-        حذف السجلات التي لا تحتوي على اسم نهائيًا
+        حذف أي سجل لا يحتوي على اسم
       */
       const contactsWithNames = contacts.filter(contact => {
         return getName(contact) !== "";
@@ -620,8 +674,8 @@
 
     async function loadContacts() {
       /*
-        يتم تحميل البيانات في الخلفية فقط.
-        لا يوجد displayContacts هنا، لذلك لن تظهر الأسماء تلقائيًا.
+        تحميل البيانات فقط.
+        لا يتم عرض أي اسم تلقائيًا.
       */
       try {
         const {
@@ -670,8 +724,8 @@
 
 
     /*
-      البحث يعمل فقط عند الضغط على زر بحث
-      أو عند الضغط على Enter.
+      البحث فقط عند الضغط على الزر
+      أو الضغط على Enter
     */
     searchButton.addEventListener("click", searchContacts);
 
@@ -683,8 +737,7 @@
 
 
     /*
-      عند الكتابة بعد نتيجة سابقة، نخفي النتائج
-      حتى يضغط المستخدم على بحث من جديد.
+      عند الكتابة لا تظهر النتائج تلقائيًا
     */
     searchInput.addEventListener("input", function() {
       contactsList.innerHTML = "";
@@ -695,8 +748,7 @@
 
 
     /*
-      عند فتح الصفحة:
-      تحميل البيانات فقط بدون عرض الأسماء.
+      تحميل البيانات في الخلفية بدون عرض الأسماء
     */
     loadContacts();
   </script>

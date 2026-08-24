@@ -12,8 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     * {
@@ -225,11 +224,6 @@
       color: #128c7e !important;
     }
 
-    .whatsapp-icon {
-      color: #25d366;
-      font-size: 18px;
-    }
-
     .empty {
       min-height: 140px;
       display: flex;
@@ -249,6 +243,30 @@
       color: #8994a8;
       text-align: center;
       font-size: 13px;
+    }
+
+    /* زر دخول الإدارة */
+    .admin-access {
+      width: min(1180px, calc(100% - 30px));
+      margin: 35px auto;
+      text-align: center;
+    }
+
+    #showAdminLoginButton {
+      min-height: 48px;
+      padding: 0 28px;
+      border: 0;
+      border-radius: 9px;
+      color: white;
+      background: #17346f;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    #showAdminLoginButton:hover {
+      background: #31569d;
     }
 
     /* لوحة الإدارة */
@@ -507,8 +525,15 @@
 
   </main>
 
-  <!-- لوحة الإدارة -->
-  <section class="admin-section">
+  <!-- زر إظهار دخول الإدارة -->
+  <div class="admin-access">
+    <button id="showAdminLoginButton" type="button">
+      دخول الإدارة
+    </button>
+  </div>
+
+  <!-- لوحة الإدارة مخفية في البداية -->
+  <section class="admin-section" id="adminSection" style="display: none;">
 
     <div class="admin-login-box" id="adminLoginBox">
       <h2>دخول الإدارة</h2>
@@ -625,10 +650,17 @@
       SUPABASE_ANON_KEY
     );
 
-    const searchInput = document.getElementById("searchInput");
-    const searchButton = document.getElementById("searchButton");
-    const contactsList = document.getElementById("contactsList");
-    const emptyMessage = document.getElementById("emptyMessage");
+    const searchInput =
+      document.getElementById("searchInput");
+
+    const searchButton =
+      document.getElementById("searchButton");
+
+    const contactsList =
+      document.getElementById("contactsList");
+
+    const emptyMessage =
+      document.getElementById("emptyMessage");
 
     let allContacts = [];
 
@@ -749,7 +781,8 @@
     function displayContacts(contacts) {
       contactsList.innerHTML = "";
 
-      const namedContacts = contacts.filter(contact => getName(contact));
+      const namedContacts =
+        contacts.filter(contact => getName(contact));
 
       if (!namedContacts.length) {
         showMessage("لا توجد نتائج مطابقة للاسم");
@@ -833,38 +866,91 @@
 
     /* لوحة الإدارة */
 
-    const adminLoginBox = document.getElementById("adminLoginBox");
-    const adminPanel = document.getElementById("adminPanel");
-    const adminEmail = document.getElementById("adminEmail");
-    const adminPassword = document.getElementById("adminPassword");
-    const adminLoginButton = document.getElementById("adminLoginButton");
-    const adminLogoutButton = document.getElementById("adminLogoutButton");
-    const adminLoginMessage = document.getElementById("adminLoginMessage");
-    const adminMessage = document.getElementById("adminMessage");
+    const adminSection =
+      document.getElementById("adminSection");
 
-    const employeeForm = document.getElementById("employeeForm");
-    const employeeId = document.getElementById("employeeId");
-    const employeeJob = document.getElementById("employeeJob");
-    const employeeName = document.getElementById("employeeName");
-    const employeeInternal = document.getElementById("employeeInternal");
-    const employeeDirect = document.getElementById("employeeDirect");
-    const employeeMobile = document.getElementById("employeeMobile");
-    const saveEmployeeButton = document.getElementById("saveEmployeeButton");
-    const cancelEditButton = document.getElementById("cancelEditButton");
+    const showAdminLoginButton =
+      document.getElementById("showAdminLoginButton");
 
-    const adminSearch = document.getElementById("adminSearch");
+    const adminLoginBox =
+      document.getElementById("adminLoginBox");
+
+    const adminPanel =
+      document.getElementById("adminPanel");
+
+    const adminEmail =
+      document.getElementById("adminEmail");
+
+    const adminPassword =
+      document.getElementById("adminPassword");
+
+    const adminLoginButton =
+      document.getElementById("adminLoginButton");
+
+    const adminLogoutButton =
+      document.getElementById("adminLogoutButton");
+
+    const adminLoginMessage =
+      document.getElementById("adminLoginMessage");
+
+    const adminMessage =
+      document.getElementById("adminMessage");
+
+    const employeeForm =
+      document.getElementById("employeeForm");
+
+    const employeeId =
+      document.getElementById("employeeId");
+
+    const employeeJob =
+      document.getElementById("employeeJob");
+
+    const employeeName =
+      document.getElementById("employeeName");
+
+    const employeeInternal =
+      document.getElementById("employeeInternal");
+
+    const employeeDirect =
+      document.getElementById("employeeDirect");
+
+    const employeeMobile =
+      document.getElementById("employeeMobile");
+
+    const saveEmployeeButton =
+      document.getElementById("saveEmployeeButton");
+
+    const cancelEditButton =
+      document.getElementById("cancelEditButton");
+
+    const adminSearch =
+      document.getElementById("adminSearch");
+
     const adminEmployeesList =
       document.getElementById("adminEmployeesList");
 
-    const csvFile = document.getElementById("csvFile");
+    const csvFile =
+      document.getElementById("csvFile");
+
     const uploadCsvButton =
       document.getElementById("uploadCsvButton");
 
     let adminEmployees = [];
 
+    showAdminLoginButton.addEventListener("click", () => {
+      adminSection.style.display = "block";
+      showAdminLoginButton.style.display = "none";
+
+      adminSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    });
+
     function showAdminMessage(message, error = false) {
       adminMessage.textContent = message;
-      adminMessage.style.color = error ? "#c62828" : "#17346f";
+      adminMessage.style.color =
+        error ? "#c62828" : "#17346f";
     }
 
     async function isCurrentUserAdmin(user) {
@@ -893,8 +979,11 @@
     }
 
     function showAdminPanel() {
+      adminSection.style.display = "block";
       adminLoginBox.style.display = "none";
       adminPanel.style.display = "block";
+      showAdminLoginButton.style.display = "none";
+
       loadAdminEmployees();
     }
 
@@ -908,7 +997,8 @@
         return;
       }
 
-      adminLoginMessage.textContent = "جاري تسجيل الدخول...";
+      adminLoginMessage.textContent =
+        "جاري تسجيل الدخول...";
 
       const { data, error } =
         await supabaseClient.auth.signInWithPassword({
@@ -922,10 +1012,12 @@
         return;
       }
 
-      const admin = await isCurrentUserAdmin(data.user);
+      const admin =
+        await isCurrentUserAdmin(data.user);
 
       if (!admin) {
         await supabaseClient.auth.signOut();
+
         adminLoginMessage.textContent =
           "هذا الحساب ليس لديه صلاحية مشرف";
         return;
@@ -940,6 +1032,9 @@
 
       adminPanel.style.display = "none";
       adminLoginBox.style.display = "block";
+      adminSection.style.display = "none";
+      showAdminLoginButton.style.display = "block";
+
       adminEmail.value = "";
       adminPassword.value = "";
     });
@@ -951,7 +1046,10 @@
         .order("created_at", { ascending: false });
 
       if (error) {
-        showAdminMessage("تعذر تحميل قائمة الموظفين", true);
+        showAdminMessage(
+          "تعذر تحميل قائمة الموظفين",
+          true
+        );
         return;
       }
 
@@ -974,13 +1072,23 @@
 
         row.innerHTML = `
           <div class="admin-employee-info">
-            <strong>${escapeHtml(employee["الإسم"])}</strong>
-            <small>${escapeHtml(employee["المسمى الوظيفي"] || "")}</small>
+            <strong>
+              ${escapeHtml(employee["الإسم"])}
+            </strong>
+
+            <small>
+              ${escapeHtml(employee["المسمى الوظيفي"] || "")}
+            </small>
           </div>
 
           <div class="admin-actions">
-            <button class="edit-button">تعديل</button>
-            <button class="delete-button">حذف</button>
+            <button class="edit-button">
+              تعديل
+            </button>
+
+            <button class="delete-button">
+              حذف
+            </button>
           </div>
         `;
 
@@ -999,10 +1107,12 @@
     }
 
     adminSearch.addEventListener("input", () => {
-      const search = normalizeText(adminSearch.value);
+      const search =
+        normalizeText(adminSearch.value);
 
       const filtered = adminEmployees.filter(employee =>
-        normalizeText(employee["الإسم"]).includes(search)
+        normalizeText(employee["الإسم"])
+          .includes(search)
       );
 
       displayAdminEmployees(filtered);
@@ -1020,7 +1130,10 @@
       };
 
       if (!employeeData["الإسم"]) {
-        showAdminMessage("يرجى كتابة اسم الموظف", true);
+        showAdminMessage(
+          "يرجى كتابة اسم الموظف",
+          true
+        );
         return;
       }
 
@@ -1039,7 +1152,11 @@
 
       if (result.error) {
         console.error(result.error);
-        showAdminMessage("حدث خطأ أثناء حفظ البيانات", true);
+
+        showAdminMessage(
+          "حدث خطأ أثناء حفظ البيانات",
+          true
+        );
         return;
       }
 
@@ -1056,13 +1173,19 @@
 
     function startEditEmployee(employee) {
       employeeId.value = employee.id;
-      employeeJob.value = employee["المسمى الوظيفي"] || "";
-      employeeName.value = employee["الإسم"] || "";
-      employeeInternal.value = employee["الرقم الداخلي"] || "";
-      employeeDirect.value = employee["الرقم المباشر"] || "";
-      employeeMobile.value = employee["الهاتف المحمول"] || "";
+      employeeJob.value =
+        employee["المسمى الوظيفي"] || "";
+      employeeName.value =
+        employee["الإسم"] || "";
+      employeeInternal.value =
+        employee["الرقم الداخلي"] || "";
+      employeeDirect.value =
+        employee["الرقم المباشر"] || "";
+      employeeMobile.value =
+        employee["الهاتف المحمول"] || "";
 
-      saveEmployeeButton.textContent = "حفظ التعديل";
+      saveEmployeeButton.textContent =
+        "حفظ التعديل";
 
       window.scrollTo({
         top: adminPanel.offsetTop,
@@ -1070,12 +1193,16 @@
       });
     }
 
-    cancelEditButton.addEventListener("click", resetEmployeeForm);
+    cancelEditButton.addEventListener(
+      "click",
+      resetEmployeeForm
+    );
 
     function resetEmployeeForm() {
       employeeForm.reset();
       employeeId.value = "";
-      saveEmployeeButton.textContent = "إضافة الموظف";
+      saveEmployeeButton.textContent =
+        "إضافة الموظف";
     }
 
     async function deleteEmployee(id) {
@@ -1090,11 +1217,17 @@
 
       if (error) {
         console.error(error);
-        showAdminMessage("تعذر حذف الموظف", true);
+
+        showAdminMessage(
+          "تعذر حذف الموظف",
+          true
+        );
         return;
       }
 
-      showAdminMessage("تم حذف الموظف بنجاح");
+      showAdminMessage(
+        "تم حذف الموظف بنجاح"
+      );
 
       await loadContacts();
       await loadAdminEmployees();
@@ -1110,7 +1243,10 @@
 
         if (char === '"') {
           insideQuotes = !insideQuotes;
-        } else if (char === "," && !insideQuotes) {
+        } else if (
+          char === "," &&
+          !insideQuotes
+        ) {
           result.push(value.trim());
           value = "";
         } else {
@@ -1129,7 +1265,10 @@
       const file = csvFile.files[0];
 
       if (!file) {
-        showAdminMessage("اختر ملف CSV أولًا", true);
+        showAdminMessage(
+          "اختر ملف CSV أولًا",
+          true
+        );
         return;
       }
 
@@ -1142,33 +1281,47 @@
           .filter(line => line.trim());
 
         if (lines.length < 2) {
-          showAdminMessage("ملف CSV فارغ أو غير صحيح", true);
+          showAdminMessage(
+            "ملف CSV فارغ أو غير صحيح",
+            true
+          );
           return;
         }
 
         const headers = parseCsvLine(lines[0]);
 
-        const employees = lines.slice(1).map(line => {
-          const values = parseCsvLine(line);
-          const row = {};
+        const employees = lines
+          .slice(1)
+          .map(line => {
+            const values = parseCsvLine(line);
+            const row = {};
 
-          headers.forEach((header, index) => {
-            row[header] = values[index] || "";
-          });
+            headers.forEach((header, index) => {
+              row[header] = values[index] || "";
+            });
 
-          return {
-            "المسمى الوظيفي":
-              row["المسمى الوظيفي"] || "",
-            "الإسم":
-              row["الإسم"] || row["الاسم"] || "",
-            "الرقم الداخلي":
-              row["الرقم الداخلي"] || "",
-            "الرقم المباشر":
-              row["الرقم المباشر"] || "",
-            "الهاتف المحمول":
-              row["الهاتف المحمول"] || ""
-          };
-        }).filter(employee => employee["الإسم"]);
+            return {
+              "المسمى الوظيفي":
+                row["المسمى الوظيفي"] || "",
+
+              "الإسم":
+                row["الإسم"] ||
+                row["الاسم"] ||
+                "",
+
+              "الرقم الداخلي":
+                row["الرقم الداخلي"] || "",
+
+              "الرقم المباشر":
+                row["الرقم المباشر"] || "",
+
+              "الهاتف المحمول":
+                row["الهاتف المحمول"] || ""
+            };
+          })
+          .filter(employee =>
+            employee["الإسم"]
+          );
 
         if (!employees.length) {
           showAdminMessage(
@@ -1184,6 +1337,7 @@
 
         if (error) {
           console.error(error);
+
           showAdminMessage(
             "حدث خطأ أثناء رفع ملف CSV",
             true

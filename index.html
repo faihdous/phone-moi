@@ -102,6 +102,10 @@
       text-align: right;
     }
 
+    #searchInput::placeholder {
+      color: #888;
+    }
+
     #searchButton {
       min-height: 62px;
       border: 0;
@@ -209,8 +213,26 @@
       text-decoration: none;
     }
 
+    .data-value a:hover {
+      text-decoration: underline;
+    }
+
     .phone-value {
       direction: ltr;
+    }
+
+    .whatsapp-link {
+      color: #128c7e !important;
+    }
+
+    .whatsapp-icon {
+      color: #25d366;
+      font-size: 18px;
+    }
+
+    .landline-icon {
+      color: #31569d;
+      font-size: 18px;
     }
 
     .empty {
@@ -489,14 +511,8 @@
 
 
     /*
-      تحديد الهاتف النقال.
-      يدعم:
-      الهاتف المحمول
-      الهاتف النقال
-      الجوال
-      المحمول
-      mobile
-      phone
+      أعمدة الهاتف النقال:
+      الهاتف النقال، الهاتف المحمول، الجوال، المحمول، الموبايل، mobile
     */
     function isMobileColumn(key) {
       const columnName = normalizeColumnName(key);
@@ -512,10 +528,8 @@
 
 
     /*
-      تحديد الرقم المباشر والهاتف الأرضي.
-      أي رقم ليس نقالًا ويحتوي على:
-      مباشر أو داخلي أو هاتف أو تلفون أو tel
-      سيتم تحويله إلى اتصال هاتفي.
+      أعمدة الهاتف الأرضي والرقم المباشر:
+      الرقم المباشر، الرقم الداخلي، الهاتف، التلفون، telephone، tel
     */
     function isLandlineColumn(key) {
       const columnName = normalizeColumnName(key);
@@ -527,13 +541,36 @@
         columnName.includes("تلفون") ||
         columnName.includes("ارض") ||
         columnName.includes("tel") ||
+        columnName.includes("telephone") ||
         columnName.includes("phone")
       );
     }
 
 
+    /*
+      تحويل الرقم إلى صيغة الكويت الدولية.
+
+      أمثلة:
+      99899935       تتحول إلى 96599899935
+      0096599899935  تتحول إلى 96599899935
+      96599899935    تبقى كما هي
+      +96599899935   تتحول إلى 96599899935
+    */
     function normalizePhone(value) {
-      return safe(value).replace(/[^\d+]/g, "");
+      let phone = safe(value).replace(/\D/g, "");
+
+      // إذا كان الرقم يبدأ بـ 00965 نحذف 00
+      if (phone.startsWith("00965")) {
+        phone = phone.substring(2);
+      }
+
+      // إذا كان الرقم يبدأ بـ 965 نتركه كما هو
+      if (phone.startsWith("965")) {
+        return phone;
+      }
+
+      // إذا كان الرقم محليًا نضيف رمز دولة الكويت
+      return "965" + phone;
     }
 
 
@@ -553,6 +590,7 @@
           return;
         }
 
+        // عدم تكرار الاسم والمسمى الوظيفي ورقم السجل
         if (
           isNameColumn(key) ||
           isJobColumn(key) ||
@@ -561,26 +599,29 @@
           return;
         }
 
-        const cleanKey = normalizeColumnName(key);
         const phone = normalizePhone(value);
         const text = escapeHtml(value);
+        const label = escapeHtml(key);
 
         /*
           الهاتف النقال:
-          يظهر معه إيموجي واتساب
-          ويفتح محادثة واتساب مباشرة
+          يظهر معه إيموجي واتساب ويفتح واتساب
         */
         if (isMobileColumn(key)) {
           rows.push(`
             <div class="data-row">
-              <span class="data-label">📱 ${escapeHtml(key)}</span>
+              <span class="data-label">
+                📱 ${label}
+              </span>
 
               <span class="data-value phone-value">
                 <a
+                  class="whatsapp-link"
                   href="https://wa.me/${phone}"
                   target="_blank"
-                  rel="noopener noreferrer">
-                  ${text} 🟢
+                  rel="noopener noreferrer"
+                  title="فتح محادثة واتساب">
+                  ${text} <span class="whatsapp-icon">🟢</span>
                 </a>
               </span>
             </div>
@@ -590,17 +631,20 @@
         }
 
         /*
-          الرقم المباشر أو الأرضي:
-          يظهر معه إيموجي هاتف أرضي
-          ويفتح تطبيق الاتصال
+          الرقم المباشر أو الهاتف الأرضي:
+          يظهر معه إيموجي تلفون أرضي ويفتح الاتصال
         */
         if (isLandlineColumn(key)) {
           rows.push(`
             <div class="data-row">
-              <span class="data-label">☎️ ${escapeHtml(key)}</span>
+              <span class="data-label">
+                ☎️ ${label}
+              </span>
 
               <span class="data-value phone-value">
-                <a href="tel:${phone}">
+                <a
+                  href="tel:${phone}"
+                  title="الاتصال بالرقم">
                   ${text}
                 </a>
               </span>
@@ -611,12 +655,17 @@
         }
 
         /*
-          باقي البيانات تظهر بشكل عادي
+          باقي البيانات تظهر بدون رابط
         */
         rows.push(`
           <div class="data-row">
-            <span class="data-label">${escapeHtml(key)}</span>
-            <span class="data-value">${text}</span>
+            <span class="data-label">
+              ${label}
+            </span>
+
+            <span class="data-value">
+              ${text}
+            </span>
           </div>
         `);
       });
@@ -628,9 +677,7 @@
     function displayContacts(contacts) {
       contactsList.innerHTML = "";
 
-      /*
-        حذف أي سجل لا يحتوي على اسم
-      */
+      // إخفاء أي سجل لا يحتوي على اسم
       const contactsWithNames = contacts.filter(contact => {
         return getName(contact) !== "";
       });
@@ -674,8 +721,8 @@
 
     async function loadContacts() {
       /*
-        تحميل البيانات فقط.
-        لا يتم عرض أي اسم تلقائيًا.
+        تحميل البيانات في الخلفية فقط.
+        لن تظهر الأسماء تلقائيًا عند فتح الصفحة.
       */
       try {
         const {
@@ -691,7 +738,10 @@
 
         allContacts = Array.isArray(data) ? data : [];
 
-        console.log("تم تحميل البيانات من Supabase:", allContacts);
+        console.log(
+          "تم تحميل البيانات من Supabase:",
+          allContacts
+        );
 
       } catch (error) {
         console.error("Supabase error:", error);
@@ -723,12 +773,11 @@
     }
 
 
-    /*
-      البحث فقط عند الضغط على الزر
-      أو الضغط على Enter
-    */
+    // البحث عند الضغط على زر البحث
     searchButton.addEventListener("click", searchContacts);
 
+
+    // البحث عند الضغط على Enter
     searchInput.addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
         searchContacts();
@@ -737,19 +786,19 @@
 
 
     /*
-      عند الكتابة لا تظهر النتائج تلقائيًا
+      عند الكتابة لا يتم عرض الأسماء تلقائيًا،
+      بل يجب الضغط على زر البحث من جديد.
     */
     searchInput.addEventListener("input", function() {
       contactsList.innerHTML = "";
+
       emptyMessage.className = "empty";
       emptyMessage.textContent = "اضغط بحث لعرض النتائج";
       emptyMessage.style.display = "flex";
     });
 
 
-    /*
-      تحميل البيانات في الخلفية بدون عرض الأسماء
-    */
+    // تحميل البيانات دون عرضها تلقائيًا
     loadContacts();
   </script>
 

@@ -245,7 +245,6 @@
       font-size: 13px;
     }
 
-    /* زر دخول الإدارة */
     .admin-access {
       width: min(1180px, calc(100% - 30px));
       margin: 35px auto;
@@ -269,7 +268,6 @@
       background: #31569d;
     }
 
-    /* لوحة الإدارة */
     .admin-section {
       width: min(1180px, calc(100% - 30px));
       margin: 35px auto;
@@ -379,6 +377,7 @@
       margin-top: 12px;
       color: #17346f;
       font-weight: 600;
+      white-space: pre-line;
     }
 
     .admin-employee-row {
@@ -525,14 +524,12 @@
 
   </main>
 
-  <!-- زر إظهار دخول الإدارة -->
   <div class="admin-access">
     <button id="showAdminLoginButton" type="button">
       دخول الإدارة
     </button>
   </div>
 
-  <!-- لوحة الإدارة مخفية في البداية -->
   <section class="admin-section" id="adminSection" style="display: none;">
 
     <div class="admin-login-box" id="adminLoginBox">
@@ -864,8 +861,6 @@
       emptyMessage.style.display = "flex";
     });
 
-    /* لوحة الإدارة */
-
     const adminSection =
       document.getElementById("adminSection");
 
@@ -1047,6 +1042,7 @@
 
       if (error) {
         showAdminMessage(
+          error.message ||
           "تعذر تحميل قائمة الموظفين",
           true
         );
@@ -1150,13 +1146,20 @@
           .insert(employeeData);
       }
 
+      /*
+       * تم تعديل هذا الجزء:
+       * يعرض رسالة الخطأ القادمة من Supabase،
+       * مثل رسالة الموظف المكرر.
+       */
       if (result.error) {
         console.error(result.error);
 
         showAdminMessage(
+          result.error.message ||
           "حدث خطأ أثناء حفظ البيانات",
           true
         );
+
         return;
       }
 
@@ -1173,14 +1176,19 @@
 
     function startEditEmployee(employee) {
       employeeId.value = employee.id;
+
       employeeJob.value =
         employee["المسمى الوظيفي"] || "";
+
       employeeName.value =
         employee["الإسم"] || "";
+
       employeeInternal.value =
         employee["الرقم الداخلي"] || "";
+
       employeeDirect.value =
         employee["الرقم المباشر"] || "";
+
       employeeMobile.value =
         employee["الهاتف المحمول"] || "";
 
@@ -1219,9 +1227,11 @@
         console.error(error);
 
         showAdminMessage(
+          error.message ||
           "تعذر حذف الموظف",
           true
         );
+
         return;
       }
 
@@ -1335,13 +1345,20 @@
           .from(TABLE_NAME)
           .insert(employees);
 
+        /*
+         * تم تعديل هذا الجزء:
+         * يعرض رسالة الخطأ القادمة من Supabase،
+         * مثل رسالة الموظف المكرر.
+         */
         if (error) {
           console.error(error);
 
           showAdminMessage(
+            error.message ||
             "حدث خطأ أثناء رفع ملف CSV",
             true
           );
+
           return;
         }
 

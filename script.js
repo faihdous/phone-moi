@@ -13,6 +13,90 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let contacts = [];
 
+  // تنظيف النص من المسافات والرموز المخفية
+  function normalize(value) {
+    return String(value ?? "")
+      .replace(/[\u200E\u200F\u202A-\u202E\u061C]/g, "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .toLowerCase();
+  }
+
+  // تنظيف أرقام الهاتف والرقم الداخلي
+  function normalizeNumber(value) {
+    return normalize(value).replace(/[^\d+]/g, "");
+  }
+
+  // إنشاء معرف فريد لكل موظف
+  function getEmployeeKey(employee) {
+    const internalNumber = normalizeNumber(
+      employee["الرقم الداخلي"]
+    );
+
+    const directNumber = normalizeNumber(
+      employee["المباشر"] ||
+      employee["الرقم المباشر"]
+    );
+
+    const mobileNumber = normalizeNumber(
+      employee["الجوال"] ||
+      employee["الهاتف المحمول"] ||
+      employee["رقم الجوال"]
+    );
+
+    const name = normalize(
+      employee["الاسم"] ||
+      employee["الإسم"]
+    );
+
+    // الأولوية للرقم الداخلي
+    if (internalNumber) {
+      return `internal:${internalNumber}`;
+    }
+
+    // ثم الرقم المباشر
+    if (directNumber) {
+      return `direct:${directNumber}`;
+    }
+
+    // ثم رقم الجوال
+    if (mobileNumber) {
+      return `mobile:${mobileNumber}`;
+    }
+
+    // وأخيرًا الاسم
+    if (name) {
+      return `name:${name}`;
+    }
+
+    return null;
+  }
+
+  // إزالة الموظفين المكررين
+  function removeDuplicates(data) {
+    const uniqueEmployees = [];
+    const usedKeys = new Set();
+
+    data.forEach((employee) => {
+      const employeeKey = getEmployeeKey(employee);
+
+      // تجاهل الصفوف الفارغة
+      if (!employeeKey) {
+        return;
+      }
+
+      // تجاهل الموظف إذا كان مكررًا
+      if (usedKeys.has(employeeKey)) {
+        return;
+      }
+
+      usedKeys.add(employeeKey);
+      uniqueEmployees.push(employee);
+    });
+
+    return uniqueEmployees;
+  }
+
   function escapeHTML(value) {
     return String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -41,28 +125,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
       card.innerHTML = `
         <h3>
-          ${escapeHTML(employee["الاسم"])}
+          ${escapeHTML(
+            employee["الاسم"] ||
+            employee["الإسم"] ||
+            "بدون اسم"
+          )}
         </h3>
 
         <p class="job-title">
-          ${escapeHTML(employee["المسمى الوظيفي"])}
+          ${escapeHTML(
+            employee["المسمى الوظيفي"] ||
+            ""
+          )}
         </p>
 
         <div class="contact-details">
 
           <p>
             <strong>الرقم الداخلي:</strong>
-            ${escapeHTML(employee["الرقم الداخلي"])}
+            ${escapeHTML(
+              employee["الرقم الداخلي"] ||
+              ""
+            )}
           </p>
 
           <p>
             <strong>الرقم المباشر:</strong>
-            ${escapeHTML(employee["المباشر"])}
+            ${escapeHTML(
+              employee["المباشر"] ||
+              employee["الرقم المباشر"] ||
+              ""
+            )}
           </p>
 
           <p>
             <strong>رقم الجوال:</strong>
-            ${escapeHTML(employee["الجوال"])}
+            ${escapeHTML(
+              employee["الجوال"] ||
+              employee["الهاتف المحمول"] ||
+              employee["رقم الجوال"] ||
+              ""
+            )}
           </p>
 
         </div>
@@ -96,7 +199,10 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(errorData);
       }
 
-      contacts = await response.json();
+      const allContacts = await response.json();
+
+      // حذف التكرار قبل عرض البيانات
+      contacts = removeDuplicates(allContacts);
 
       showContacts(contacts);
 
@@ -104,6 +210,15 @@ document.addEventListener("DOMContentLoaded", () => {
         statusText.textContent =
           `تم تحميل ${contacts.length} جهة اتصال`;
       }
+
+      console.log(
+        `عدد السجلات من Supabase: ${allContacts.length}`
+      );
+
+      console.log(
+        `عدد السجلات بعد حذف التكرار: ${contacts.length}`
+      );
+
     } catch (error) {
       console.error("Supabase error:", error);
 
@@ -124,20 +239,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (searchInput) {
     searchInput.addEventListener("input", (event) => {
-      const searchValue =
-        event.target.value.trim().toLowerCase();
+      const searchValue = normalize(event.target.value);
 
       const filteredContacts = contacts.filter((employee) => {
         return [
           employee["الاسم"],
+          employee["الإسم"],
           employee["المسمى الوظيفي"],
           employee["الرقم الداخلي"],
           employee["المباشر"],
-          employee["الجوال"]
+          employee["الرقم المباشر"],
+          employee["الجوال"],
+          employee["الهاتف المحمول"],
+          employee["رقم الجوال"]
         ].some((value) =>
-          String(value ?? "")
-            .toLowerCase()
-            .includes(searchValue)
+          normalize(value).includes(searchValue)
         );
       });
 

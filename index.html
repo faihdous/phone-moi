@@ -11,19 +11,58 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --navy: #071d35;
+      --navy-light: #0d3155;
+      --blue: #164b78;
+      --gold: #c9a44c;
+      --gold-light: #e3c875;
+      --white: #fff;
+      --background: #eef3f7;
+      --border: #d7e0e8;
+      --text: #17324d;
+      --muted: #6b7d8e;
+      --danger: #a52626;
+      --shadow: 0 12px 30px rgba(7, 29, 53, .13);
+    }
+
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      background: #f4f7fc;
-      color: #17346f;
+      color: var(--text);
       font-family: "Cairo", Arial, sans-serif;
+      background:
+        linear-gradient(rgba(238,243,247,.94), rgba(238,243,247,.94)),
+        repeating-linear-gradient(
+          135deg,
+          rgba(7,29,53,.035) 0,
+          rgba(7,29,53,.035) 1px,
+          transparent 1px,
+          transparent 14px
+        );
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: .25;
+      background-image:
+        linear-gradient(30deg, rgba(201,164,76,.07) 12%, transparent 12.5%, transparent 87%, rgba(201,164,76,.07) 87.5%),
+        linear-gradient(150deg, rgba(201,164,76,.07) 12%, transparent 12.5%, transparent 87%, rgba(201,164,76,.07) 87.5%);
+      background-size: 38px 38px;
     }
 
     .header {
@@ -32,18 +71,48 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      position: relative;
+      overflow: hidden;
+      color: var(--white);
       text-align: center;
-      background: linear-gradient(135deg, #172b5d, #40599a);
+      background: linear-gradient(135deg, #071d35, #0d3155);
+      border-bottom: 5px solid var(--gold);
+    }
+
+    .header::before,
+    .header::after {
+      content: "◆";
+      position: absolute;
+      color: rgba(227,200,117,.22);
+      font-size: 190px;
+    }
+
+    .header::before {
+      left: -60px;
+      top: 45px;
+      transform: rotate(18deg);
+    }
+
+    .header::after {
+      right: -60px;
+      bottom: 10px;
+      transform: rotate(-18deg);
+    }
+
+    .header > div {
+      position: relative;
+      z-index: 1;
     }
 
     .logo-wrapper {
       width: 135px;
       height: 135px;
       margin: 0 auto 20px;
-      padding: 8px;
+      padding: 9px;
+      border: 2px solid rgba(227,200,117,.8);
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255,255,255,.12);
+      box-shadow: 0 0 0 7px rgba(255,255,255,.05), 0 12px 25px rgba(0,0,0,.25);
     }
 
     .official-logo {
@@ -51,6 +120,7 @@
       height: 100%;
       object-fit: contain;
       border-radius: 50%;
+      background: white;
     }
 
     h1 {
@@ -58,12 +128,14 @@
       color: white;
       font-size: clamp(32px, 6vw, 60px);
       font-weight: 800;
+      text-shadow: 0 3px 12px rgba(0,0,0,.25);
     }
 
     .subtitle {
       margin-top: 10px;
-      color: white;
+      color: #f4e7bd;
       font-size: clamp(16px, 2.5vw, 25px);
+      font-weight: 600;
     }
 
     .container {
@@ -78,9 +150,10 @@
       grid-template-columns: 1fr 160px;
       gap: 8px;
       padding: 8px;
-      border-radius: 18px;
+      border: 1px solid rgba(201,164,76,.45);
+      border-radius: 15px;
       background: white;
-      box-shadow: 0 12px 30px rgba(20, 42, 85, 0.16);
+      box-shadow: var(--shadow);
     }
 
     .search-box {
@@ -94,7 +167,7 @@
       width: 100%;
       border: 0;
       outline: 0;
-      color: #17346f;
+      color: var(--navy);
       background: transparent;
       font-family: inherit;
       font-size: 18px;
@@ -102,34 +175,42 @@
     }
 
     #searchInput::placeholder {
-      color: #888;
+      color: #8997a4;
     }
 
     #searchButton {
       min-height: 62px;
       border: 0;
-      border-radius: 13px;
+      border-radius: 11px;
       color: white;
-      background: linear-gradient(135deg, #17346f, #31569d);
+      background: linear-gradient(135deg, var(--navy), var(--blue));
       cursor: pointer;
       font-family: inherit;
       font-size: 18px;
       font-weight: 700;
+      transition: .2s;
     }
 
-    #searchButton:hover {
-      background: linear-gradient(135deg, #102451, #24488d);
+    #searchButton:hover,
+    .admin-login-box button:hover,
+    .employee-form button:hover,
+    #uploadCsvButton:hover {
+      background: var(--blue);
+      transform: translateY(-1px);
     }
 
     .hint {
       margin: 14px 0 28px;
-      color: #78869b;
+      color: var(--muted);
       text-align: center;
       font-size: 14px;
     }
 
     .section-title {
       margin: 0 0 15px;
+      padding-right: 13px;
+      border-right: 5px solid var(--gold);
+      color: var(--navy);
       font-size: 30px;
       font-weight: 800;
     }
@@ -137,10 +218,11 @@
     .results {
       min-height: 180px;
       padding: 18px;
-      border: 1px solid #e2e8f2;
-      border-radius: 18px;
-      background: white;
-      box-shadow: 0 7px 22px rgba(28, 50, 93, 0.07);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--gold);
+      border-radius: 15px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 7px 22px rgba(7,29,53,.08);
     }
 
     .contacts-list {
@@ -151,28 +233,43 @@
 
     .contact-card {
       position: relative;
+      overflow: hidden;
       padding: 20px;
-      border: 1px solid #e2e8f2;
-      border-radius: 15px;
-      background: linear-gradient(145deg, #fff, #f9fbff);
-      box-shadow: 0 4px 13px rgba(25, 48, 92, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: linear-gradient(145deg, #fff, #f6f9fb);
+      box-shadow: 0 5px 15px rgba(7,29,53,.08);
+      transition: .2s;
+    }
+
+    .contact-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 22px rgba(7,29,53,.14);
     }
 
     .contact-card::before {
       content: "";
       position: absolute;
       right: 0;
-      top: 16px;
-      bottom: 16px;
-      width: 4px;
-      border-radius: 5px 0 0 5px;
-      background: linear-gradient(#24488d, #70a1df);
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: linear-gradient(var(--gold), var(--gold-light));
+    }
+
+    .contact-card::after {
+      content: "◆";
+      position: absolute;
+      left: 14px;
+      top: 10px;
+      color: rgba(201,164,76,.3);
+      font-size: 18px;
     }
 
     .contact-name {
       padding-right: 8px;
       margin-bottom: 8px;
-      color: #173a7b;
+      color: var(--navy);
       font-size: 22px;
       font-weight: 800;
       overflow-wrap: anywhere;
@@ -181,7 +278,7 @@
     .job-title {
       padding-right: 8px;
       margin-bottom: 14px;
-      color: #78869b;
+      color: var(--muted);
       font-size: 15px;
       overflow-wrap: anywhere;
     }
@@ -192,27 +289,28 @@
       gap: 15px;
       padding-top: 11px;
       margin-top: 11px;
-      border-top: 1px solid #edf0f5;
+      border-top: 1px solid #e8edf2;
     }
 
     .data-label {
-      color: #78869b;
+      color: var(--muted);
       white-space: nowrap;
     }
 
     .data-value {
-      color: #1c3978;
+      color: var(--blue);
       font-weight: 700;
       text-align: left;
       overflow-wrap: anywhere;
     }
 
     .data-value a {
-      color: #1c3978;
+      color: var(--blue);
       text-decoration: none;
     }
 
     .data-value a:hover {
+      color: var(--gold);
       text-decoration: underline;
     }
 
@@ -229,57 +327,59 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #78869b;
+      color: var(--muted);
       text-align: center;
       line-height: 2;
     }
 
     .error {
-      color: #c62828;
+      color: var(--danger);
     }
 
     .footer {
       padding: 0 20px 25px;
-      color: #8994a8;
+      color: #718291;
       text-align: center;
       font-size: 13px;
     }
 
-    .admin-access {
+    .admin-access,
+    .admin-section {
       width: min(1180px, calc(100% - 30px));
       margin: 35px auto;
+    }
+
+    .admin-access {
       text-align: center;
     }
 
     #showAdminLoginButton {
       min-height: 48px;
       padding: 0 28px;
-      border: 0;
-      border-radius: 9px;
+      border: 1px solid var(--gold);
+      border-radius: 8px;
       color: white;
-      background: #17346f;
+      background: var(--navy);
       cursor: pointer;
       font-family: inherit;
       font-size: 16px;
       font-weight: 700;
+      transition: .2s;
     }
 
     #showAdminLoginButton:hover {
-      background: #31569d;
-    }
-
-    .admin-section {
-      width: min(1180px, calc(100% - 30px));
-      margin: 35px auto;
+      color: var(--navy);
+      background: var(--gold-light);
     }
 
     .admin-login-box,
     .admin-panel {
       padding: 25px;
-      border: 1px solid #e2e8f2;
-      border-radius: 18px;
-      background: white;
-      box-shadow: 0 7px 22px rgba(28, 50, 93, 0.07);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--gold);
+      border-radius: 15px;
+      background: rgba(255,255,255,.97);
+      box-shadow: var(--shadow);
     }
 
     .admin-login-box {
@@ -290,7 +390,9 @@
     .admin-login-box h2,
     .admin-panel h2,
     .admin-panel h3 {
-      color: #17346f;
+      padding-right: 10px;
+      border-right: 4px solid var(--gold);
+      color: var(--navy);
     }
 
     .admin-login-box input,
@@ -300,11 +402,21 @@
       min-height: 48px;
       padding: 10px 14px;
       margin-bottom: 12px;
-      border: 1px solid #dbe2ee;
-      border-radius: 9px;
+      border: 1px solid #cfdbe5;
+      border-radius: 8px;
       outline: none;
+      color: var(--text);
+      background: #fbfcfd;
       font-family: inherit;
       font-size: 15px;
+    }
+
+    .admin-login-box input:focus,
+    .employee-form input:focus,
+    #adminSearch:focus,
+    #searchInput:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,164,76,.14);
     }
 
     .admin-login-box button,
@@ -313,18 +425,13 @@
       min-height: 48px;
       padding: 0 22px;
       border: 0;
-      border-radius: 9px;
+      border-radius: 8px;
       color: white;
-      background: #17346f;
+      background: var(--navy);
       cursor: pointer;
       font-family: inherit;
       font-weight: 700;
-    }
-
-    .admin-login-box button:hover,
-    .employee-form button:hover,
-    #uploadCsvButton:hover {
-      background: #31569d;
+      transition: .2s;
     }
 
     .employee-form {
@@ -343,7 +450,7 @@
 
     .cancel-button,
     .logout-button {
-      background: #777 !important;
+      background: #66727c !important;
     }
 
     .admin-panel-header {
@@ -364,7 +471,7 @@
     }
 
     .csv-help {
-      color: #78869b;
+      color: var(--muted);
       font-size: 14px;
     }
 
@@ -375,7 +482,7 @@
     #adminLoginMessage,
     #adminMessage {
       margin-top: 12px;
-      color: #17346f;
+      color: var(--navy);
       font-weight: 600;
       white-space: pre-line;
     }
@@ -387,17 +494,19 @@
       gap: 12px;
       padding: 14px;
       margin-top: 10px;
-      border: 1px solid #e2e8f2;
-      border-radius: 10px;
+      border: 1px solid var(--border);
+      border-right: 4px solid var(--gold);
+      border-radius: 9px;
+      background: #fbfcfd;
     }
 
     .admin-employee-info {
-      color: #17346f;
+      color: var(--navy);
     }
 
     .admin-employee-info small {
       display: block;
-      color: #78869b;
+      color: var(--muted);
     }
 
     .admin-actions {
@@ -415,11 +524,17 @@
     }
 
     .edit-button {
-      background: #31569d;
+      background: var(--blue);
     }
 
     .delete-button {
-      background: #c62828;
+      background: var(--danger);
+    }
+
+    hr {
+      margin: 28px 0;
+      border: 0;
+      border-top: 1px solid var(--border);
     }
 
     @media (max-width: 700px) {
@@ -484,7 +599,7 @@
   <header class="header">
     <div>
       <div class="logo-wrapper">
-        <img src="logo.PNG" alt="الشعار" class="official-logo">
+        <img src="logo.PNG" alt="شعار الجنسية ووثائق السفر" class="official-logo">
       </div>
 
       <h1>دليل أرقام الموظفين</h1>
@@ -530,16 +645,13 @@
     </button>
   </div>
 
-  <section class="admin-section" id="adminSection" style="display: none;">
+  <section class="admin-section" id="adminSection" style="display:none;">
 
     <div class="admin-login-box" id="adminLoginBox">
       <h2>دخول الإدارة</h2>
 
-      <input id="adminEmail" type="email"
-        placeholder="البريد الإلكتروني">
-
-      <input id="adminPassword" type="password"
-        placeholder="كلمة المرور">
+      <input id="adminEmail" type="email" placeholder="البريد الإلكتروني">
+      <input id="adminPassword" type="password" placeholder="كلمة المرور">
 
       <button id="adminLoginButton" type="button">
         تسجيل دخول المشرف
@@ -553,9 +665,7 @@
       <div class="admin-panel-header">
         <h2>لوحة إدارة الموظفين</h2>
 
-        <button id="adminLogoutButton"
-          type="button"
-          class="logout-button">
+        <button id="adminLogoutButton" type="button" class="logout-button">
           تسجيل الخروج
         </button>
       </div>
@@ -566,34 +676,21 @@
 
         <input type="hidden" id="employeeId">
 
-        <input id="employeeJob"
-          type="text"
-          placeholder="المسمى الوظيفي">
+        <input id="employeeJob" type="text" placeholder="المسمى الوظيفي">
 
-        <input id="employeeName"
-          type="text"
-          placeholder="الإسم"
-          required>
+        <input id="employeeName" type="text" placeholder="الإسم" required>
 
-        <input id="employeeInternal"
-          type="text"
-          placeholder="الرقم الداخلي">
+        <input id="employeeInternal" type="text" placeholder="الرقم الداخلي">
 
-        <input id="employeeDirect"
-          type="text"
-          placeholder="الرقم المباشر">
+        <input id="employeeDirect" type="text" placeholder="الرقم المباشر">
 
-        <input id="employeeMobile"
-          type="text"
-          placeholder="الهاتف المحمول">
+        <input id="employeeMobile" type="text" placeholder="الهاتف المحمول">
 
         <button type="submit" id="saveEmployeeButton">
           إضافة الموظف
         </button>
 
-        <button type="button"
-          id="cancelEditButton"
-          class="cancel-button">
+        <button type="button" id="cancelEditButton" class="cancel-button">
           إلغاء التعديل
         </button>
 
@@ -620,8 +717,7 @@
 
       <h3>البحث والإدارة</h3>
 
-      <input id="adminSearch"
-        type="search"
+      <input id="adminSearch" type="search"
         placeholder="ابحث باسم الموظف للتعديل أو الحذف">
 
       <div id="adminEmployeesList"></div>
@@ -647,17 +743,10 @@
       SUPABASE_ANON_KEY
     );
 
-    const searchInput =
-      document.getElementById("searchInput");
-
-    const searchButton =
-      document.getElementById("searchButton");
-
-    const contactsList =
-      document.getElementById("contactsList");
-
-    const emptyMessage =
-      document.getElementById("emptyMessage");
+    const searchInput = document.getElementById("searchInput");
+    const searchButton = document.getElementById("searchButton");
+    const contactsList = document.getElementById("contactsList");
+    const emptyMessage = document.getElementById("emptyMessage");
 
     let allContacts = [];
 
@@ -861,74 +950,29 @@
       emptyMessage.style.display = "flex";
     });
 
-    const adminSection =
-      document.getElementById("adminSection");
-
-    const showAdminLoginButton =
-      document.getElementById("showAdminLoginButton");
-
-    const adminLoginBox =
-      document.getElementById("adminLoginBox");
-
-    const adminPanel =
-      document.getElementById("adminPanel");
-
-    const adminEmail =
-      document.getElementById("adminEmail");
-
-    const adminPassword =
-      document.getElementById("adminPassword");
-
-    const adminLoginButton =
-      document.getElementById("adminLoginButton");
-
-    const adminLogoutButton =
-      document.getElementById("adminLogoutButton");
-
-    const adminLoginMessage =
-      document.getElementById("adminLoginMessage");
-
-    const adminMessage =
-      document.getElementById("adminMessage");
-
-    const employeeForm =
-      document.getElementById("employeeForm");
-
-    const employeeId =
-      document.getElementById("employeeId");
-
-    const employeeJob =
-      document.getElementById("employeeJob");
-
-    const employeeName =
-      document.getElementById("employeeName");
-
-    const employeeInternal =
-      document.getElementById("employeeInternal");
-
-    const employeeDirect =
-      document.getElementById("employeeDirect");
-
-    const employeeMobile =
-      document.getElementById("employeeMobile");
-
-    const saveEmployeeButton =
-      document.getElementById("saveEmployeeButton");
-
-    const cancelEditButton =
-      document.getElementById("cancelEditButton");
-
-    const adminSearch =
-      document.getElementById("adminSearch");
-
-    const adminEmployeesList =
-      document.getElementById("adminEmployeesList");
-
-    const csvFile =
-      document.getElementById("csvFile");
-
-    const uploadCsvButton =
-      document.getElementById("uploadCsvButton");
+    const adminSection = document.getElementById("adminSection");
+    const showAdminLoginButton = document.getElementById("showAdminLoginButton");
+    const adminLoginBox = document.getElementById("adminLoginBox");
+    const adminPanel = document.getElementById("adminPanel");
+    const adminEmail = document.getElementById("adminEmail");
+    const adminPassword = document.getElementById("adminPassword");
+    const adminLoginButton = document.getElementById("adminLoginButton");
+    const adminLogoutButton = document.getElementById("adminLogoutButton");
+    const adminLoginMessage = document.getElementById("adminLoginMessage");
+    const adminMessage = document.getElementById("adminMessage");
+    const employeeForm = document.getElementById("employeeForm");
+    const employeeId = document.getElementById("employeeId");
+    const employeeJob = document.getElementById("employeeJob");
+    const employeeName = document.getElementById("employeeName");
+    const employeeInternal = document.getElementById("employeeInternal");
+    const employeeDirect = document.getElementById("employeeDirect");
+    const employeeMobile = document.getElementById("employeeMobile");
+    const saveEmployeeButton = document.getElementById("saveEmployeeButton");
+    const cancelEditButton = document.getElementById("cancelEditButton");
+    const adminSearch = document.getElementById("adminSearch");
+    const adminEmployeesList = document.getElementById("adminEmployeesList");
+    const csvFile = document.getElementById("csvFile");
+    const uploadCsvButton = document.getElementById("uploadCsvButton");
 
     let adminEmployees = [];
 
@@ -945,7 +989,7 @@
     function showAdminMessage(message, error = false) {
       adminMessage.textContent = message;
       adminMessage.style.color =
-        error ? "#c62828" : "#17346f";
+        error ? "#a52626" : "#071d35";
     }
 
     async function isCurrentUserAdmin(user) {
@@ -1042,8 +1086,7 @@
 
       if (error) {
         showAdminMessage(
-          error.message ||
-          "تعذر تحميل قائمة الموظفين",
+          error.message || "تعذر تحميل قائمة الموظفين",
           true
         );
         return;
@@ -1068,23 +1111,13 @@
 
         row.innerHTML = `
           <div class="admin-employee-info">
-            <strong>
-              ${escapeHtml(employee["الإسم"])}
-            </strong>
-
-            <small>
-              ${escapeHtml(employee["المسمى الوظيفي"] || "")}
-            </small>
+            <strong>${escapeHtml(employee["الإسم"])}</strong>
+            <small>${escapeHtml(employee["المسمى الوظيفي"] || "")}</small>
           </div>
 
           <div class="admin-actions">
-            <button class="edit-button">
-              تعديل
-            </button>
-
-            <button class="delete-button">
-              حذف
-            </button>
+            <button class="edit-button">تعديل</button>
+            <button class="delete-button">حذف</button>
           </div>
         `;
 
@@ -1103,12 +1136,10 @@
     }
 
     adminSearch.addEventListener("input", () => {
-      const search =
-        normalizeText(adminSearch.value);
+      const search = normalizeText(adminSearch.value);
 
       const filtered = adminEmployees.filter(employee =>
-        normalizeText(employee["الإسم"])
-          .includes(search)
+        normalizeText(employee["الإسم"]).includes(search)
       );
 
       displayAdminEmployees(filtered);
@@ -1126,10 +1157,7 @@
       };
 
       if (!employeeData["الإسم"]) {
-        showAdminMessage(
-          "يرجى كتابة اسم الموظف",
-          true
-        );
+        showAdminMessage("يرجى كتابة اسم الموظف", true);
         return;
       }
 
@@ -1146,11 +1174,6 @@
           .insert(employeeData);
       }
 
-      /*
-       * تم تعديل هذا الجزء:
-       * يعرض رسالة الخطأ القادمة من Supabase،
-       * مثل رسالة الموظف المكرر.
-       */
       if (result.error) {
         console.error(result.error);
 
@@ -1176,24 +1199,13 @@
 
     function startEditEmployee(employee) {
       employeeId.value = employee.id;
+      employeeJob.value = employee["المسمى الوظيفي"] || "";
+      employeeName.value = employee["الإسم"] || "";
+      employeeInternal.value = employee["الرقم الداخلي"] || "";
+      employeeDirect.value = employee["الرقم المباشر"] || "";
+      employeeMobile.value = employee["الهاتف المحمول"] || "";
 
-      employeeJob.value =
-        employee["المسمى الوظيفي"] || "";
-
-      employeeName.value =
-        employee["الإسم"] || "";
-
-      employeeInternal.value =
-        employee["الرقم الداخلي"] || "";
-
-      employeeDirect.value =
-        employee["الرقم المباشر"] || "";
-
-      employeeMobile.value =
-        employee["الهاتف المحمول"] || "";
-
-      saveEmployeeButton.textContent =
-        "حفظ التعديل";
+      saveEmployeeButton.textContent = "حفظ التعديل";
 
       window.scrollTo({
         top: adminPanel.offsetTop,
@@ -1201,16 +1213,12 @@
       });
     }
 
-    cancelEditButton.addEventListener(
-      "click",
-      resetEmployeeForm
-    );
+    cancelEditButton.addEventListener("click", resetEmployeeForm);
 
     function resetEmployeeForm() {
       employeeForm.reset();
       employeeId.value = "";
-      saveEmployeeButton.textContent =
-        "إضافة الموظف";
+      saveEmployeeButton.textContent = "إضافة الموظف";
     }
 
     async function deleteEmployee(id) {
@@ -1227,17 +1235,14 @@
         console.error(error);
 
         showAdminMessage(
-          error.message ||
-          "تعذر حذف الموظف",
+          error.message || "تعذر حذف الموظف",
           true
         );
 
         return;
       }
 
-      showAdminMessage(
-        "تم حذف الموظف بنجاح"
-      );
+      showAdminMessage("تم حذف الموظف بنجاح");
 
       await loadContacts();
       await loadAdminEmployees();
@@ -1252,11 +1257,13 @@
         const char = line[i];
 
         if (char === '"') {
-          insideQuotes = !insideQuotes;
-        } else if (
-          char === "," &&
-          !insideQuotes
-        ) {
+          if (insideQuotes && line[i + 1] === '"') {
+            value += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === "," && !insideQuotes) {
           result.push(value.trim());
           value = "";
         } else {
@@ -1265,20 +1272,14 @@
       }
 
       result.push(value.trim());
-
-      return result.map(item =>
-        item.replace(/^"|"$/g, "").trim()
-      );
+      return result;
     }
 
     uploadCsvButton.addEventListener("click", () => {
       const file = csvFile.files[0];
 
       if (!file) {
-        showAdminMessage(
-          "اختر ملف CSV أولًا",
-          true
-        );
+        showAdminMessage("اختر ملف CSV أولًا", true);
         return;
       }
 
@@ -1307,7 +1308,7 @@
             const row = {};
 
             headers.forEach((header, index) => {
-              row[header] = values[index] || "";
+              row[header.trim()] = values[index] || "";
             });
 
             return {
@@ -1329,9 +1330,7 @@
                 row["الهاتف المحمول"] || ""
             };
           })
-          .filter(employee =>
-            employee["الإسم"]
-          );
+          .filter(employee => employee["الإسم"]);
 
         if (!employees.length) {
           showAdminMessage(
@@ -1345,11 +1344,6 @@
           .from(TABLE_NAME)
           .insert(employees);
 
-        /*
-         * تم تعديل هذا الجزء:
-         * يعرض رسالة الخطأ القادمة من Supabase،
-         * مثل رسالة الموظف المكرر.
-         */
         if (error) {
           console.error(error);
 

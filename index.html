@@ -11,6 +11,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -992,17 +993,27 @@
         error ? "#a52626" : "#071d35";
     }
 
+    /*
+      تم تعديل هذه الدالة:
+      لا تستخدم email من جدول admin_users،
+      بل تتحقق من user_id المطابق لـ user.id
+    */
     async function isCurrentUserAdmin(user) {
       if (!user) return false;
 
       const { data, error } = await supabaseClient
         .from("admin_users")
-        .select("email,is_admin")
-        .ilike("email", user.email)
+        .select("user_id,is_admin")
+        .eq("user_id", user.id)
         .eq("is_admin", true)
         .maybeSingle();
 
-      return !error && !!data;
+      if (error) {
+        console.error("Admin check error:", error);
+        return false;
+      }
+
+      return !!data;
     }
 
     async function checkAdminSession() {
@@ -1046,6 +1057,8 @@
         });
 
       if (error) {
+        console.error("Login error:", error);
+
         adminLoginMessage.textContent =
           "البريد الإلكتروني أو كلمة المرور غير صحيحة";
         return;

@@ -993,11 +993,6 @@
         error ? "#a52626" : "#071d35";
     }
 
-    /*
-      تم تعديل هذه الدالة:
-      لا تستخدم email من جدول admin_users،
-      بل تتحقق من user_id المطابق لـ user.id
-    */
     async function isCurrentUserAdmin(user) {
       if (!user) return false;
 
@@ -1109,6 +1104,7 @@
       displayAdminEmployees(adminEmployees);
     }
 
+    // ✅ MODIFIED: جعل السطر كامل قابل للتعديل أيضًا (بدون تغيير أساسيات الموقع)
     function displayAdminEmployees(employees) {
       adminEmployeesList.innerHTML = "";
 
@@ -1123,24 +1119,37 @@
         row.className = "admin-employee-row";
 
         row.innerHTML = `
-          <div class="admin-employee-info">
+          <div class="admin-employee-info" style="cursor:pointer;">
             <strong>${escapeHtml(employee["الإسم"])}</strong>
             <small>${escapeHtml(employee["المسمى الوظيفي"] || "")}</small>
           </div>
 
           <div class="admin-actions">
-            <button class="edit-button">تعديل</button>
-            <button class="delete-button">حذف</button>
+            <button class="edit-button" type="button">تعديل</button>
+            <button class="delete-button" type="button">حذف</button>
           </div>
         `;
 
+        // ✅ الضغط على السطر (أو على جزء الاسم) يبدأ التعديل
+        row.addEventListener("click", (e) => {
+          // لا تفتح التعديل إذا ضغط المستخدم زر الحذف
+          if (e.target && e.target.classList && e.target.classList.contains("delete-button")) {
+            return;
+          }
+          startEditEmployee(employee);
+        });
+
+        // زر التعديل (احتياط)
         row.querySelector(".edit-button")
-          .addEventListener("click", () => {
+          .addEventListener("click", (e) => {
+            e.stopPropagation();
             startEditEmployee(employee);
           });
 
+        // زر الحذف
         row.querySelector(".delete-button")
-          .addEventListener("click", () => {
+          .addEventListener("click", (e) => {
+            e.stopPropagation();
             deleteEmployee(employee.id);
           });
 

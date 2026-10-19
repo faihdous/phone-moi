@@ -636,6 +636,7 @@
       <div id="emptyMessage" class="empty">
         اكتب اسم الموظف ثم اضغط بحث
       </div>
+
     </section>
 
   </main>
@@ -1104,7 +1105,6 @@
       displayAdminEmployees(adminEmployees);
     }
 
-    // ✅ MODIFIED: جعل السطر كامل قابل للتعديل أيضًا (بدون تغيير أساسيات الموقع)
     function displayAdminEmployees(employees) {
       adminEmployeesList.innerHTML = "";
 
@@ -1130,23 +1130,19 @@
           </div>
         `;
 
-        // ✅ الضغط على السطر (أو على جزء الاسم) يبدأ التعديل
         row.addEventListener("click", (e) => {
-          // لا تفتح التعديل إذا ضغط المستخدم زر الحذف
           if (e.target && e.target.classList && e.target.classList.contains("delete-button")) {
             return;
           }
           startEditEmployee(employee);
         });
 
-        // زر التعديل (احتياط)
         row.querySelector(".edit-button")
           .addEventListener("click", (e) => {
             e.stopPropagation();
             startEditEmployee(employee);
           });
 
-        // زر الحذف
         row.querySelector(".delete-button")
           .addEventListener("click", (e) => {
             e.stopPropagation();
@@ -1157,12 +1153,19 @@
       });
     }
 
+    // ✅ التعديل الرئيسي: جعل بحث لوحة الإدارة يعتمد على getName() مثل بحث الصفحة
     adminSearch.addEventListener("input", () => {
       const search = normalizeText(adminSearch.value);
 
-      const filtered = adminEmployees.filter(employee =>
-        normalizeText(employee["الإسم"]).includes(search)
-      );
+      if (!search) {
+        displayAdminEmployees(adminEmployees);
+        return;
+      }
+
+      const filtered = adminEmployees.filter(employee => {
+        const name = getName(employee);
+        return normalizeText(name).includes(search);
+      });
 
       displayAdminEmployees(filtered);
     });

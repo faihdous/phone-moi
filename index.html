@@ -635,7 +635,7 @@
     <div class="search-area">
       <div class="search-box">
         <input id="searchInput" type="search"
-          placeholder="إبحث بالاسم..." autocomplete="off">
+          placeholder="إبحث بالاسم أو المسمى الوظيفي..." autocomplete="off">
       </div>
 
       <button id="searchButton" type="button">
@@ -644,7 +644,7 @@
     </div>
 
     <div class="hint">
-      اكتب الاسم ثم اضغط على زر البحث لعرض التفاصيل
+      اكتب الاسم ثم اضغط بحث لعرض التفاصيل
     </div>
 
     <h2 class="section-title">قائمة الأسماء</h2>
@@ -745,7 +745,7 @@
       <h3>البحث والإدارة</h3>
 
       <input id="adminSearch" type="search"
-        placeholder="ابحث باسم الموظف للتعديل أو الحذف">
+        placeholder="ابحث باسم الموظف أو المسمى الوظيفي للتعديل أو الحذف">
 
       <div id="adminEmployeesList"></div>
 
@@ -943,17 +943,20 @@
       }
     }
 
+    // ✅ تم التعديل: البحث يشمل الاسم + المسمى الوظيفي
     function searchContacts() {
       const search = normalizeText(searchInput.value);
 
       if (!search) {
-        showMessage("اكتب اسم الموظف ثم اضغط بحث");
+        showMessage("اكتب الاسم أو المسمى الوظيفي ثم اضغط بحث");
         return;
       }
 
-      const results = allContacts.filter(contact =>
-        normalizeText(getName(contact)).includes(search)
-      );
+      const results = allContacts.filter(contact => {
+        const nameOk = normalizeText(getName(contact)).includes(search);
+        const jobOk = normalizeText(getJobTitle(contact)).includes(search);
+        return nameOk || jobOk;
+      });
 
       displayContacts(results);
     }
@@ -972,7 +975,6 @@
       emptyMessage.style.display = "flex";
     });
 
-    // ------- Admin vars -------
     const adminSection = document.getElementById("adminSection");
     const showAdminLoginButton = document.getElementById("showAdminLoginButton");
     const adminLoginBox = document.getElementById("adminLoginBox");
@@ -997,7 +999,6 @@
     const csvFile = document.getElementById("csvFile");
     const uploadCsvButton = document.getElementById("uploadCsvButton");
 
-    // ✅ زر مسح الكل
     const deleteAllButton = document.getElementById("deleteAllButton");
 
     let adminEmployees = [];
@@ -1152,12 +1153,20 @@
       });
     }
 
+    // ✅ تم التعديل: بحث الإدارة يشمل الاسم + المسمى الوظيفي
     adminSearch.addEventListener("input", () => {
       const search = normalizeText(adminSearch.value);
 
-      const filtered = adminEmployees.filter(employee =>
-        normalizeText(getName(employee)).includes(search)
-      );
+      if (!search) {
+        displayAdminEmployees(adminEmployees);
+        return;
+      }
+
+      const filtered = adminEmployees.filter(employee => {
+        const nameOk = normalizeText(getName(employee)).includes(search);
+        const jobOk = normalizeText(getJobTitle(employee)).includes(search);
+        return nameOk || jobOk;
+      });
 
       displayAdminEmployees(filtered);
     });
@@ -1265,7 +1274,6 @@
       await loadAdminEmployees();
     }
 
-    // ✅ تم التعديل هنا: حذف الكل بدون neq("id", null)
     deleteAllButton.addEventListener("click", async () => {
       const ok = confirm("⚠️ هل أنت متأكد من مسح جميع الأرقام؟ سيتم حذف كل السجلات من جدول employees.");
       if (!ok) return;
@@ -1273,7 +1281,6 @@
       try {
         showAdminMessage("جارٍ مسح جميع الأرقام...");
 
-        // يمسح الكل بشكل صحيح إذا كان id رقمياً (int/serial/ bigint)
         const { error } = await supabaseClient
           .from(TABLE_NAME)
           .delete()

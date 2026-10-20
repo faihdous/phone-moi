@@ -532,6 +532,25 @@
       background: var(--danger);
     }
 
+    .danger-full-btn {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 8px;
+      color: white;
+      background: var(--danger);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 800;
+      transition: .2s;
+    }
+
+    .danger-full-btn:hover {
+      background: #8f1717;
+      transform: translateY(-1px);
+    }
+
     hr {
       margin: 28px 0;
       border: 0;
@@ -713,6 +732,14 @@
       </button>
 
       <div id="adminMessage"></div>
+
+      <hr>
+
+      <!-- ✅ زر مسح جميع الأرقام (حذف جميع السجلات) -->
+      <h3>أدوات سريعة</h3>
+      <button id="deleteAllButton" type="button" class="danger-full-btn">
+        مسح جميع الأرقام
+      </button>
 
       <hr>
 
@@ -970,6 +997,9 @@
     const adminEmployeesList = document.getElementById("adminEmployeesList");
     const csvFile = document.getElementById("csvFile");
     const uploadCsvButton = document.getElementById("uploadCsvButton");
+
+    // ✅ إضافة زر مسح الكل
+    const deleteAllButton = document.getElementById("deleteAllButton");
 
     let adminEmployees = [];
 
@@ -1235,6 +1265,32 @@
       await loadContacts();
       await loadAdminEmployees();
     }
+
+    // ✅ زر: مسح جميع الأرقام (حذف كل السجلات من employees)
+    deleteAllButton.addEventListener("click", async () => {
+      const ok = confirm("⚠️ هل أنت متأكد من مسح جميع الأرقام؟ سيتم حذف كل السجلات من جدول employees.");
+      if (!ok) return;
+
+      try {
+        showAdminMessage("جارٍ مسح جميع الأرقام...");
+
+        // حذف الكل
+        const { error } = await supabaseClient
+          .from(TABLE_NAME)
+          .delete()
+          .neq("id", null);
+
+        if (error) throw error;
+
+        showAdminMessage("تم مسح جميع الأرقام بنجاح");
+
+        await loadContacts();
+        await loadAdminEmployees();
+      } catch (e) {
+        console.error(e);
+        showAdminMessage(e.message || "تعذر مسح البيانات", true);
+      }
+    });
 
     function parseCsvLine(line) {
       const result = [];

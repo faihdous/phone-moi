@@ -11,6 +11,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -21,6 +22,7 @@
       --gold: #c9a44c;
       --gold-light: #e3c875;
       --white: #fff;
+      --background: #eef3f7;
       --border: #d7e0e8;
       --text: #17324d;
       --muted: #6b7d8e;
@@ -28,8 +30,13 @@
       --shadow: 0 12px 30px rgba(7, 29, 53, .13);
     }
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       margin: 0;
@@ -81,9 +88,22 @@
       font-size: 190px;
     }
 
-    .header::before { left: -60px; top: 45px; transform: rotate(18deg); }
-    .header::after { right: -60px; bottom: 10px; transform: rotate(-18deg); }
-    .header > div { position: relative; z-index: 1; }
+    .header::before {
+      left: -60px;
+      top: 45px;
+      transform: rotate(18deg);
+    }
+
+    .header::after {
+      right: -60px;
+      bottom: 10px;
+      transform: rotate(-18deg);
+    }
+
+    .header > div {
+      position: relative;
+      z-index: 1;
+    }
 
     .logo-wrapper {
       width: 135px;
@@ -155,7 +175,9 @@
       text-align: right;
     }
 
-    #searchInput::placeholder { color: #8997a4; }
+    #searchInput::placeholder {
+      color: #8997a4;
+    }
 
     #searchButton {
       min-height: 62px;
@@ -178,7 +200,12 @@
       transform: translateY(-1px);
     }
 
-    .hint { margin: 14px 0 28px; color: var(--muted); text-align: center; font-size: 14px; }
+    .hint {
+      margin: 14px 0 28px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
 
     .section-title {
       margin: 0 0 15px;
@@ -216,7 +243,10 @@
       transition: .2s;
     }
 
-    .contact-card:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(7,29,53,.14); }
+    .contact-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 22px rgba(7,29,53,.14);
+    }
 
     .contact-card::before {
       content: "";
@@ -263,7 +293,10 @@
       border-top: 1px solid #e8edf2;
     }
 
-    .data-label { color: var(--muted); white-space: nowrap; }
+    .data-label {
+      color: var(--muted);
+      white-space: nowrap;
+    }
 
     .data-value {
       color: var(--blue);
@@ -272,11 +305,23 @@
       overflow-wrap: anywhere;
     }
 
-    .data-value a { color: var(--blue); text-decoration: none; }
-    .data-value a:hover { color: var(--gold); text-decoration: underline; }
+    .data-value a {
+      color: var(--blue);
+      text-decoration: none;
+    }
 
-    .phone-value { direction: ltr; }
-    .whatsapp-link { color: #128c7e !important; }
+    .data-value a:hover {
+      color: var(--gold);
+      text-decoration: underline;
+    }
+
+    .phone-value {
+      direction: ltr;
+    }
+
+    .whatsapp-link {
+      color: #128c7e !important;
+    }
 
     .empty {
       min-height: 140px;
@@ -288,14 +333,26 @@
       line-height: 2;
     }
 
-    .footer { padding: 0 20px 25px; color: #718291; text-align: center; font-size: 13px; }
+    .error {
+      color: var(--danger);
+    }
 
-    .admin-access, .admin-section {
+    .footer {
+      padding: 0 20px 25px;
+      color: #718291;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .admin-access,
+    .admin-section {
       width: min(1180px, calc(100% - 30px));
       margin: 35px auto;
     }
 
-    .admin-access { text-align: center; }
+    .admin-access {
+      text-align: center;
+    }
 
     #showAdminLoginButton {
       min-height: 48px;
@@ -311,9 +368,13 @@
       transition: .2s;
     }
 
-    #showAdminLoginButton:hover { color: var(--navy); background: var(--gold-light); }
+    #showAdminLoginButton:hover {
+      color: var(--navy);
+      background: var(--gold-light);
+    }
 
-    .admin-login-box, .admin-panel {
+    .admin-login-box,
+    .admin-panel {
       padding: 25px;
       border: 1px solid var(--border);
       border-top: 4px solid var(--gold);
@@ -322,7 +383,11 @@
       box-shadow: var(--shadow);
     }
 
-    .admin-login-box { max-width: 500px; margin: auto; }
+    .admin-login-box {
+      max-width: 500px;
+      margin: auto;
+    }
+
     .admin-login-box h2,
     .admin-panel h2,
     .admin-panel h3 {
@@ -370,10 +435,24 @@
       transition: .2s;
     }
 
-    .employee-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .employee-form input { margin: 0; }
-    .employee-form button { margin-top: 5px; }
-    .cancel-button, .logout-button { background: #66727c !important; }
+    .employee-form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .employee-form input {
+      margin: 0;
+    }
+
+    .employee-form button {
+      margin-top: 5px;
+    }
+
+    .cancel-button,
+    .logout-button {
+      background: #66727c !important;
+    }
 
     .admin-panel-header {
       display: flex;
@@ -392,10 +471,17 @@
       font-family: inherit;
     }
 
-    .csv-help { color: var(--muted); font-size: 14px; }
-    #csvFile { margin: 10px 0; }
+    .csv-help {
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-    #adminLoginMessage, #adminMessage {
+    #csvFile {
+      margin: 10px 0;
+    }
+
+    #adminLoginMessage,
+    #adminMessage {
       margin-top: 12px;
       color: var(--navy);
       font-weight: 600;
@@ -415,10 +501,20 @@
       background: #fbfcfd;
     }
 
-    .admin-employee-info { color: var(--navy); }
-    .admin-employee-info small { display: block; color: var(--muted); }
+    .admin-employee-info {
+      color: var(--navy);
+    }
 
-    .admin-actions { display: flex; gap: 7px; }
+    .admin-employee-info small {
+      display: block;
+      color: var(--muted);
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 7px;
+    }
+
     .admin-actions button {
       padding: 8px 13px;
       border: 0;
@@ -428,23 +524,73 @@
       font-family: inherit;
     }
 
-    .edit-button { background: var(--blue); }
-    .delete-button { background: var(--danger); }
+    .edit-button {
+      background: var(--blue);
+    }
 
-    hr { margin: 28px 0; border: 0; border-top: 1px solid var(--border); }
+    .delete-button {
+      background: var(--danger);
+    }
+
+    hr {
+      margin: 28px 0;
+      border: 0;
+      border-top: 1px solid var(--border);
+    }
 
     @media (max-width: 700px) {
-      .header { min-height: 340px; padding: 28px 15px 55px; }
-      .logo-wrapper { width: 110px; height: 110px; }
-      .container { width: calc(100% - 22px); margin-top: -32px; }
-      .search-area { display: flex; flex-direction: column; }
-      .search-box, #searchButton { min-height: 58px; }
-      .contacts-list { grid-template-columns: 1fr; }
-      .data-row { align-items: flex-start; flex-direction: column; gap: 4px; }
-      .employee-form { grid-template-columns: 1fr; }
-      .admin-panel-header, .admin-employee-row { align-items: stretch; flex-direction: column; }
-      .admin-actions { width: 100%; }
-      .admin-actions button { flex: 1; }
+      .header {
+        min-height: 340px;
+        padding: 28px 15px 55px;
+      }
+
+      .logo-wrapper {
+        width: 110px;
+        height: 110px;
+      }
+
+      .container {
+        width: calc(100% - 22px);
+        margin-top: -32px;
+      }
+
+      .search-area {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .search-box,
+      #searchButton {
+        min-height: 58px;
+      }
+
+      .contacts-list {
+        grid-template-columns: 1fr;
+      }
+
+      .data-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .employee-form {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-panel-header,
+      .admin-employee-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .admin-actions {
+        width: 100%;
+      }
+
+      .admin-actions button {
+        flex: 1;
+      }
     }
   </style>
 </head>
@@ -469,25 +615,35 @@
 
     <div class="search-area">
       <div class="search-box">
-        <input id="searchInput" type="search" placeholder="إبحث بالاسم..." autocomplete="off">
+        <input id="searchInput" type="search"
+          placeholder="إبحث بالاسم..." autocomplete="off">
       </div>
 
-      <button id="searchButton" type="button">بحث 🔍</button>
+      <button id="searchButton" type="button">
+        بحث 🔍
+      </button>
     </div>
 
-    <div class="hint">اكتب الاسم ثم اضغط على زر البحث لعرض التفاصيل</div>
+    <div class="hint">
+      اكتب الاسم ثم اضغط على زر البحث لعرض التفاصيل
+    </div>
 
     <h2 class="section-title">قائمة الأسماء</h2>
 
     <section class="results">
       <div id="contactsList" class="contacts-list"></div>
-      <div id="emptyMessage" class="empty">اكتب اسم الموظف ثم اضغط بحث</div>
+
+      <div id="emptyMessage" class="empty">
+        اكتب اسم الموظف ثم اضغط بحث
+      </div>
     </section>
 
   </main>
 
   <div class="admin-access">
-    <button id="showAdminLoginButton" type="button">دخول الإدارة</button>
+    <button id="showAdminLoginButton" type="button">
+      دخول الإدارة
+    </button>
   </div>
 
   <section class="admin-section" id="adminSection" style="display:none;">
@@ -498,7 +654,9 @@
       <input id="adminEmail" type="email" placeholder="البريد الإلكتروني">
       <input id="adminPassword" type="password" placeholder="كلمة المرور">
 
-      <button id="adminLoginButton" type="button">تسجيل دخول المشرف</button>
+      <button id="adminLoginButton" type="button">
+        تسجيل دخول المشرف
+      </button>
 
       <div id="adminLoginMessage"></div>
     </div>
@@ -507,21 +665,36 @@
 
       <div class="admin-panel-header">
         <h2>لوحة إدارة الموظفين</h2>
-        <button id="adminLogoutButton" type="button" class="logout-button">تسجيل الخروج</button>
+
+        <button id="adminLogoutButton" type="button" class="logout-button">
+          تسجيل الخروج
+        </button>
       </div>
 
       <h3>إضافة موظف يدويًا</h3>
 
       <form id="employeeForm" class="employee-form">
+
         <input type="hidden" id="employeeId">
+
         <input id="employeeJob" type="text" placeholder="المسمى الوظيفي">
+
         <input id="employeeName" type="text" placeholder="الإسم" required>
+
         <input id="employeeInternal" type="text" placeholder="الرقم الداخلي">
+
         <input id="employeeDirect" type="text" placeholder="الرقم المباشر">
+
         <input id="employeeMobile" type="text" placeholder="الهاتف المحمول">
 
-        <button type="submit" id="saveEmployeeButton">إضافة الموظف</button>
-        <button type="button" id="cancelEditButton" class="cancel-button">إلغاء التعديل</button>
+        <button type="submit" id="saveEmployeeButton">
+          إضافة الموظف
+        </button>
+
+        <button type="button" id="cancelEditButton" class="cancel-button">
+          إلغاء التعديل
+        </button>
+
       </form>
 
       <hr>
@@ -529,12 +702,15 @@
       <h3>إضافة موظفين من ملف CSV</h3>
 
       <p class="csv-help">
-        ترتيب الأعمدة المطلوب: المسمى الوظيفي، الإسم، الرقم الداخلي، الرقم المباشر، الهاتف المحمول
+        ترتيب الأعمدة المطلوب:
+        المسمى الوظيفي، الإسم، الرقم الداخلي، الرقم المباشر، الهاتف المحمول
       </p>
 
       <input id="csvFile" type="file" accept=".csv,text/csv">
 
-      <button id="uploadCsvButton" type="button">رفع ملف CSV</button>
+      <button id="uploadCsvButton" type="button">
+        رفع ملف CSV
+      </button>
 
       <div id="adminMessage"></div>
 
@@ -542,21 +718,27 @@
 
       <h3>البحث والإدارة</h3>
 
-      <input id="adminSearch" type="search" placeholder="ابحث باسم الموظف للتعديل أو الحذف">
+      <input id="adminSearch" type="search"
+        placeholder="ابحث باسم الموظف للتعديل أو الحذف">
 
       <div id="adminEmployeesList"></div>
 
     </div>
   </section>
 
-  <footer class="footer">دليل أرقام الموظفين - الإدارة العامة للجنسية ووثائق السفر الكويتية</footer>
+  <footer class="footer">
+    دليل أرقام الموظفين - الإدارة العامة للجنسية ووثائق السفر الكويتية
+  </footer>
 
   <script>
     const SUPABASE_URL = "https://hxdpfrnxawhyanjwvlmv.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_TLic-BebUrdemyOnDcKnnQ_MnlLJjgH";
     const TABLE_NAME = "employees";
 
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
     const searchInput = document.getElementById("searchInput");
     const searchButton = document.getElementById("searchButton");
@@ -567,6 +749,13 @@
 
     function safe(value) {
       return value === null || value === undefined ? "" : String(value).trim();
+    }
+
+    // ✅ إزالة أحرف RTL/LTR المخفية التي تأتي مع ملفات الـCSV من بعض المصادر
+    function cleanInvisible(value) {
+      return safe(value)
+        .replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, "") // marks
+        .trim();
     }
 
     function escapeHtml(value) {
@@ -618,9 +807,13 @@
 
       if (!phone) return "";
 
-      if (phone.startsWith("00965")) phone = phone.substring(2);
+      if (phone.startsWith("00965")) {
+        phone = phone.substring(2);
+      }
 
-      if (phone.startsWith("965")) return phone;
+      if (phone.startsWith("965")) {
+        return phone;
+      }
 
       return "965" + phone;
     }
@@ -693,8 +886,12 @@
         const job = getJobTitle(contact);
 
         card.innerHTML = `
-          <div class="contact-name">${escapeHtml(name)}</div>
+          <div class="contact-name">
+            ${escapeHtml(name)}
+          </div>
+
           ${job ? `<div class="job-title">${escapeHtml(job)}</div>` : ""}
+
           ${createDataRows(contact)}
         `;
 
@@ -709,9 +906,11 @@
           .select("*");
 
         if (error) throw error;
+
         allContacts = data || [];
       } catch (error) {
         console.error(error);
+
         showMessage(
           "تعذر تحميل البيانات من Supabase.<br>تأكد من صلاحية قراءة جدول employees.",
           "error"
@@ -737,7 +936,9 @@
     searchButton.addEventListener("click", searchContacts);
 
     searchInput.addEventListener("keydown", event => {
-      if (event.key === "Enter") searchContacts();
+      if (event.key === "Enter") {
+        searchContacts();
+      }
     });
 
     searchInput.addEventListener("input", () => {
@@ -746,7 +947,6 @@
       emptyMessage.style.display = "flex";
     });
 
-    // ================= ADMIN =================
     const adminSection = document.getElementById("adminSection");
     const showAdminLoginButton = document.getElementById("showAdminLoginButton");
     const adminLoginBox = document.getElementById("adminLoginBox");
@@ -776,7 +976,11 @@
     showAdminLoginButton.addEventListener("click", () => {
       adminSection.style.display = "block";
       showAdminLoginButton.style.display = "none";
-      adminSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      adminSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
     });
 
     function showAdminMessage(message, error = false) {
@@ -804,6 +1008,7 @@
 
     async function checkAdminSession() {
       const { data } = await supabaseClient.auth.getSession();
+
       if (data.session && await isCurrentUserAdmin(data.session.user)) {
         showAdminPanel();
       }
@@ -814,8 +1019,7 @@
       adminLoginBox.style.display = "none";
       adminPanel.style.display = "block";
       showAdminLoginButton.style.display = "none";
-      showAdminMessage(""); // clear
-      adminSearch.value = ""; // clear search
+
       loadAdminEmployees();
     }
 
@@ -830,7 +1034,10 @@
 
       adminLoginMessage.textContent = "جاري تسجيل الدخول...";
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
 
       if (error) {
         console.error("Login error:", error);
@@ -862,26 +1069,24 @@
       adminPassword.value = "";
     });
 
-    // ✅ (تعديل أساسي) order على id بدل created_at
     async function loadAdminEmployees() {
-      adminEmployeesList.innerHTML = "";
+      try {
+        const { data, error } = await supabaseClient
+          .from(TABLE_NAME)
+          .select("*")
+          .order("id", { ascending: false });
 
-      const { data, error } = await supabaseClient
-        .from(TABLE_NAME)
-        .select("*")
-        .order("id", { ascending: false }); // <-- هذا أهم تعديل
+        if (error) throw error;
 
-      if (error) {
-        console.error("loadAdminEmployees error:", error);
+        adminEmployees = data || [];
+        displayAdminEmployees(adminEmployees);
+      } catch (error) {
+        console.error(error);
         showAdminMessage(error.message || "تعذر تحميل قائمة الموظفين", true);
-        return;
       }
-
-      adminEmployees = data || [];
-      renderAdminEmployees(adminEmployees);
     }
 
-    function renderAdminEmployees(employees) {
+    function displayAdminEmployees(employees) {
       adminEmployeesList.innerHTML = "";
 
       if (!employees.length) {
@@ -908,27 +1113,24 @@
           </div>
         `;
 
-        row.querySelector(".edit-button").addEventListener("click", () => startEditEmployee(employee));
-        row.querySelector(".delete-button").addEventListener("click", () => deleteEmployee(employee.id));
+        row.querySelector(".edit-button")
+          .addEventListener("click", () => startEditEmployee(employee));
+
+        row.querySelector(".delete-button")
+          .addEventListener("click", () => deleteEmployee(employee.id));
 
         adminEmployeesList.appendChild(row);
       });
     }
 
-    // ✅ فلترة البحث باستخدام getName (بدون الاعتماد المباشر على employee["الإسم"] فقط)
     adminSearch.addEventListener("input", () => {
       const search = normalizeText(adminSearch.value);
 
-      if (!search) {
-        renderAdminEmployees(adminEmployees);
-        return;
-      }
-
-      const filtered = adminEmployees.filter(emp =>
-        normalizeText(getName(emp)).includes(search)
+      const filtered = adminEmployees.filter(employee =>
+        normalizeText(getName(employee)).includes(search)
       );
 
-      renderAdminEmployees(filtered);
+      displayAdminEmployees(filtered);
     });
 
     employeeForm.addEventListener("submit", async event => {
@@ -962,11 +1164,21 @@
 
       if (result.error) {
         console.error(result.error);
-        showAdminMessage(result.error.message || "حدث خطأ أثناء حفظ البيانات", true);
+
+        showAdminMessage(
+          result.error.message ||
+          "حدث خطأ أثناء حفظ البيانات",
+          true
+        );
+
         return;
       }
 
-      showAdminMessage(employeeId.value ? "تم تعديل بيانات الموظف بنجاح" : "تمت إضافة الموظف بنجاح");
+      showAdminMessage(
+        employeeId.value
+          ? "تم تعديل بيانات الموظف بنجاح"
+          : "تمت إضافة الموظف بنجاح"
+      );
 
       resetEmployeeForm();
       await loadContacts();
@@ -975,15 +1187,18 @@
 
     function startEditEmployee(employee) {
       employeeId.value = employee.id;
-      employeeJob.value = getJobTitle(employee) || "";
-      employeeName.value = getName(employee) || "";
+      employeeJob.value = employee["المسمى الوظيفي"] || "";
+      employeeName.value = employee["الإسم"] || "";
       employeeInternal.value = employee["الرقم الداخلي"] || "";
       employeeDirect.value = employee["الرقم المباشر"] || "";
       employeeMobile.value = employee["الهاتف المحمول"] || "";
 
       saveEmployeeButton.textContent = "حفظ التعديل";
 
-      window.scrollTo({ top: adminPanel.offsetTop, behavior: "smooth" });
+      window.scrollTo({
+        top: adminPanel.offsetTop,
+        behavior: "smooth"
+      });
     }
 
     cancelEditButton.addEventListener("click", resetEmployeeForm);
@@ -995,7 +1210,9 @@
     }
 
     async function deleteEmployee(id) {
-      if (!confirm("هل أنت متأكد من حذف هذا الموظف؟")) return;
+      if (!confirm("هل أنت متأكد من حذف هذا الموظف؟")) {
+        return;
+      }
 
       const { error } = await supabaseClient
         .from(TABLE_NAME)
@@ -1004,11 +1221,17 @@
 
       if (error) {
         console.error(error);
-        showAdminMessage(error.message || "تعذر حذف الموظف", true);
+
+        showAdminMessage(
+          error.message || "تعذر حذف الموظف",
+          true
+        );
+
         return;
       }
 
       showAdminMessage("تم حذف الموظف بنجاح");
+
       await loadContacts();
       await loadAdminEmployees();
     }
@@ -1042,6 +1265,7 @@
 
     uploadCsvButton.addEventListener("click", () => {
       const file = csvFile.files[0];
+
       if (!file) {
         showAdminMessage("اختر ملف CSV أولًا", true);
         return;
@@ -1060,39 +1284,55 @@
           return;
         }
 
-        const headers = parseCsvLine(lines[0]);
+        // ✅ تنظيف العناوين + القيم من أحرف RTL المخفية
+        const rawHeaders = parseCsvLine(lines[0]);
+        const headers = rawHeaders.map(h => cleanInvisible(h));
 
-        const employees = lines.slice(1).map(line => {
-          const values = parseCsvLine(line);
-          const row = {};
+        const employees = lines.slice(1)
+          .map(line => {
+            const values = parseCsvLine(line).map(v => cleanInvisible(v));
 
-          headers.forEach((header, index) => {
-            row[header.trim()] = values[index] || "";
-          });
+            const row = {};
+            headers.forEach((header, index) => {
+              row[header] = values[index] || "";
+            });
 
-          return {
-            "المسمى الوظيفي": row["المسمى الوظيفي"] || "",
-            "الإسم": row["الإسم"] || row["الاسم"] || "",
-            "الرقم الداخلي": row["الرقم الداخلي"] || "",
-            "الرقم المباشر": row["الرقم المباشر"] || "",
-            "الهاتف المحمول": row["الهاتف المحمول"] || ""
-          };
-        }).filter(employee => employee["الإسم"]);
+            return {
+              "المسمى الوظيفي": row["المسمى الوظيفي"] || "",
+              "الإسم": row["الإسم"] || "",
+              "الرقم الداخلي": row["الرقم الداخلي"] || "",
+              "الرقم المباشر": row["الرقم المباشر"] || "",
+              "الهاتف المحمول": row["الهاتف المحمول"] || ""
+            };
+          })
+          .filter(employee => employee["الإسم"]);
 
         if (!employees.length) {
-          showAdminMessage("لم يتم العثور على أسماء داخل الملف", true);
+          showAdminMessage(
+            "لم يتم العثور على أسماء داخل الملف (تحقق من الأعمدة أو الترميز).",
+            true
+          );
           return;
         }
 
-        const { error } = await supabaseClient.from(TABLE_NAME).insert(employees);
+        const { error } = await supabaseClient
+          .from(TABLE_NAME)
+          .insert(employees);
 
         if (error) {
           console.error(error);
-          showAdminMessage(error.message || "حدث خطأ أثناء رفع ملف CSV", true);
+
+          showAdminMessage(
+            error.message ||
+            "حدث خطأ أثناء رفع ملف CSV",
+            true
+          );
+
           return;
         }
 
         showAdminMessage(`تمت إضافة ${employees.length} موظف بنجاح`);
+
         csvFile.value = "";
 
         await loadContacts();
@@ -1107,4 +1347,5 @@
   </script>
 
 </body>
+
 </html>

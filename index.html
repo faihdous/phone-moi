@@ -1292,26 +1292,28 @@
           .map(line => {
             const values = parseCsvLine(line).map(v => cleanInvisible(v));
 
-            // ✅ دالة ترجع قيمة العمود حتى لو غير موجود في الهيدر
-            const getVal = (headerName) => {
+            // ✅ التعديل الأساسي: لو قيمة العمود فارغة/غير موجودة نرسل null وليس ""
+            const getValOrNull = (headerName) => {
               const idx = headers.indexOf(headerName);
-              if (idx === -1) return "";       // العمود غير موجود في الملف
-              return cleanInvisible(values[idx] || ""); // العمود موجود لكن القيمة ناقصة
+              if (idx === -1) return null;                 // العمود غير موجود في الهيدر
+              const v = cleanInvisible(values[idx] || ""); // العمود موجود لكن القيمة ناقصة/فارغة
+              return v === "" ? null : v;
             };
 
-            const name = getVal("الإسم");
+            const name = getValOrNull("الإسم");
 
             // ✅ نلزم "الإسم" فقط
+            if (!name) return null;
+
             return {
-              "المسمى الوظيفي": getVal("المسمى الوظيفي"),
+              "المسمى الوظيفي": getValOrNull("المسمى الوظيفي"),
               "الإسم": name,
-              // ✅ هذه الأعمدة لا تشترط وجودها/قيمها
-              "الرقم الداخلي": getVal("الرقم الداخلي"),
-              "الرقم المباشر": getVal("الرقم المباشر"),
-              "الهاتف المحمول": getVal("الهاتف المحمول")
+              "الرقم الداخلي": getValOrNull("الرقم الداخلي"),
+              "الرقم المباشر": getValOrNull("الرقم المباشر"),
+              "الهاتف المحمول": getValOrNull("الهاتف المحمول")
             };
           })
-          .filter(employee => cleanInvisible(employee["الإسم"]));
+          .filter(Boolean);
 
         if (!employees.length) {
           showAdminMessage(

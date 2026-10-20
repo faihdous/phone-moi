@@ -43,11 +43,11 @@
       color: var(--text);
       font-family: "Cairo", Arial, sans-serif;
       background:
-        linear-gradient(rgba(238,243,247,.94), rgba(238,243,247,.94)),
+        linear-gradient(rgba(238, 243, 247, .94), rgba(238, 243, 247, .94)),
         repeating-linear-gradient(
           135deg,
-          rgba(7,29,53,.035) 0,
-          rgba(7,29,53,.035) 1px,
+          rgba(7, 29, 53, .035) 0,
+          rgba(7, 29, 53, .035) 1px,
           transparent 1px,
           transparent 14px
         );
@@ -61,8 +61,8 @@
       pointer-events: none;
       opacity: .25;
       background-image:
-        linear-gradient(30deg, rgba(201,164,76,.07) 12%, transparent 12.5%, transparent 87%, rgba(201,164,76,.07) 87.5%),
-        linear-gradient(150deg, rgba(201,164,76,.07) 12%, transparent 12.5%, transparent 87%, rgba(201,164,76,.07) 87.5%);
+        linear-gradient(30deg, rgba(201, 164, 76, .07) 12%, transparent 12.5%, transparent 87%, rgba(201, 164, 76, .07) 87.5%),
+        linear-gradient(150deg, rgba(201, 164, 76, .07) 12%, transparent 12.5%, transparent 87%, rgba(201, 164, 76, .07) 87.5%);
       background-size: 38px 38px;
     }
 
@@ -84,7 +84,7 @@
     .header::after {
       content: "◆";
       position: absolute;
-      color: rgba(227,200,117,.22);
+      color: rgba(227, 200, 117, .22);
       font-size: 190px;
     }
 
@@ -110,10 +110,10 @@
       height: 135px;
       margin: 0 auto 20px;
       padding: 9px;
-      border: 2px solid rgba(227,200,117,.8);
+      border: 2px solid rgba(227, 200, 117, .8);
       border-radius: 50%;
-      background: rgba(255,255,255,.12);
-      box-shadow: 0 0 0 7px rgba(255,255,255,.05), 0 12px 25px rgba(0,0,0,.25);
+      background: rgba(255, 255, 255, .12);
+      box-shadow: 0 0 0 7px rgba(255, 255, 255, .05), 0 12px 25px rgba(0, 0, 0, .25);
     }
 
     .official-logo {
@@ -129,7 +129,7 @@
       color: white;
       font-size: clamp(32px, 6vw, 60px);
       font-weight: 800;
-      text-shadow: 0 3px 12px rgba(0,0,0,.25);
+      text-shadow: 0 3px 12px rgba(0, 0, 0, .25);
     }
 
     .subtitle {
@@ -151,7 +151,7 @@
       grid-template-columns: 1fr 160px;
       gap: 8px;
       padding: 8px;
-      border: 1px solid rgba(201,164,76,.45);
+      border: 1px solid rgba(201, 164, 76, .45);
       border-radius: 15px;
       background: white;
       box-shadow: var(--shadow);
@@ -222,8 +222,8 @@
       border: 1px solid var(--border);
       border-top: 4px solid var(--gold);
       border-radius: 15px;
-      background: rgba(255,255,255,.96);
-      box-shadow: 0 7px 22px rgba(7,29,53,.08);
+      background: rgba(255, 255, 255, .96);
+      box-shadow: 0 7px 22px rgba(7, 29, 53, .08);
     }
 
     .contacts-list {
@@ -239,13 +239,13 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       background: linear-gradient(145deg, #fff, #f6f9fb);
-      box-shadow: 0 5px 15px rgba(7,29,53,.08);
+      box-shadow: 0 5px 15px rgba(7, 29, 53, .08);
       transition: .2s;
     }
 
     .contact-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 10px 22px rgba(7,29,53,.14);
+      box-shadow: 0 10px 22px rgba(7, 29, 53, .14);
     }
 
     .contact-card::before {
@@ -263,7 +263,7 @@
       position: absolute;
       left: 14px;
       top: 10px;
-      color: rgba(201,164,76,.3);
+      color: rgba(201, 164, 76, .3);
       font-size: 18px;
     }
 
@@ -379,7 +379,7 @@
       border: 1px solid var(--border);
       border-top: 4px solid var(--gold);
       border-radius: 15px;
-      background: rgba(255,255,255,.97);
+      background: rgba(255, 255, 255, .97);
       box-shadow: var(--shadow);
     }
 
@@ -417,7 +417,7 @@
     #adminSearch:focus,
     #searchInput:focus {
       border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(201,164,76,.14);
+      box-shadow: 0 0 0 3px rgba(201, 164, 76, .14);
     }
 
     .admin-login-box button,
@@ -735,7 +735,6 @@
 
       <hr>
 
-      <!-- ✅ زر مسح جميع الأرقام (حذف جميع السجلات) -->
       <h3>أدوات سريعة</h3>
       <button id="deleteAllButton" type="button" class="danger-full-btn">
         مسح جميع الأرقام
@@ -778,10 +777,9 @@
       return value === null || value === undefined ? "" : String(value).trim();
     }
 
-    // ✅ إزالة أحرف RTL/LTR المخفية التي تأتي مع ملفات الـCSV من بعض المصادر
     function cleanInvisible(value) {
       return safe(value)
-        .replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, "") // marks
+        .replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, "")
         .trim();
     }
 
@@ -974,6 +972,7 @@
       emptyMessage.style.display = "flex";
     });
 
+    // ------- Admin vars -------
     const adminSection = document.getElementById("adminSection");
     const showAdminLoginButton = document.getElementById("showAdminLoginButton");
     const adminLoginBox = document.getElementById("adminLoginBox");
@@ -998,7 +997,7 @@
     const csvFile = document.getElementById("csvFile");
     const uploadCsvButton = document.getElementById("uploadCsvButton");
 
-    // ✅ إضافة زر مسح الكل
+    // ✅ زر مسح الكل
     const deleteAllButton = document.getElementById("deleteAllButton");
 
     let adminEmployees = [];
@@ -1266,7 +1265,7 @@
       await loadAdminEmployees();
     }
 
-    // ✅ زر: مسح جميع الأرقام (حذف كل السجلات من employees)
+    // ✅ تم التعديل هنا: حذف الكل بدون neq("id", null)
     deleteAllButton.addEventListener("click", async () => {
       const ok = confirm("⚠️ هل أنت متأكد من مسح جميع الأرقام؟ سيتم حذف كل السجلات من جدول employees.");
       if (!ok) return;
@@ -1274,11 +1273,11 @@
       try {
         showAdminMessage("جارٍ مسح جميع الأرقام...");
 
-        // حذف الكل
+        // يمسح الكل بشكل صحيح إذا كان id رقمياً (int/serial/ bigint)
         const { error } = await supabaseClient
           .from(TABLE_NAME)
           .delete()
-          .neq("id", null);
+          .gt("id", 0);
 
         if (error) throw error;
 
@@ -1340,7 +1339,6 @@
           return;
         }
 
-        // ✅ تنظيف العناوين + القيم من أحرف RTL المخفية
         const rawHeaders = parseCsvLine(lines[0]);
         const headers = rawHeaders.map(h => cleanInvisible(h));
 
@@ -1348,17 +1346,14 @@
           .map(line => {
             const values = parseCsvLine(line).map(v => cleanInvisible(v));
 
-            // ✅ التعديل الأساسي: لو قيمة العمود فارغة/غير موجودة نرسل null وليس ""
             const getValOrNull = (headerName) => {
               const idx = headers.indexOf(headerName);
-              if (idx === -1) return null;                 // العمود غير موجود في الهيدر
-              const v = cleanInvisible(values[idx] || ""); // العمود موجود لكن القيمة ناقصة/فارغة
+              if (idx === -1) return null;
+              const v = cleanInvisible(values[idx] || "");
               return v === "" ? null : v;
             };
 
             const name = getValOrNull("الإسم");
-
-            // ✅ نلزم "الإسم" فقط
             if (!name) return null;
 
             return {

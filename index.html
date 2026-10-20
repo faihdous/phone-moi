@@ -1292,24 +1292,30 @@
           .map(line => {
             const values = parseCsvLine(line).map(v => cleanInvisible(v));
 
-            const row = {};
-            headers.forEach((header, index) => {
-              row[header] = values[index] || "";
-            });
+            // ✅ دالة ترجع قيمة العمود حتى لو غير موجود في الهيدر
+            const getVal = (headerName) => {
+              const idx = headers.indexOf(headerName);
+              if (idx === -1) return "";       // العمود غير موجود في الملف
+              return cleanInvisible(values[idx] || ""); // العمود موجود لكن القيمة ناقصة
+            };
 
+            const name = getVal("الإسم");
+
+            // ✅ نلزم "الإسم" فقط
             return {
-              "المسمى الوظيفي": row["المسمى الوظيفي"] || "",
-              "الإسم": row["الإسم"] || "",
-              "الرقم الداخلي": row["الرقم الداخلي"] || "",
-              "الرقم المباشر": row["الرقم المباشر"] || "",
-              "الهاتف المحمول": row["الهاتف المحمول"] || ""
+              "المسمى الوظيفي": getVal("المسمى الوظيفي"),
+              "الإسم": name,
+              // ✅ هذه الأعمدة لا تشترط وجودها/قيمها
+              "الرقم الداخلي": getVal("الرقم الداخلي"),
+              "الرقم المباشر": getVal("الرقم المباشر"),
+              "الهاتف المحمول": getVal("الهاتف المحمول")
             };
           })
-          .filter(employee => employee["الإسم"]);
+          .filter(employee => cleanInvisible(employee["الإسم"]));
 
         if (!employees.length) {
           showAdminMessage(
-            "لم يتم العثور على أسماء داخل الملف (تحقق من الأعمدة أو الترميز).",
+            "لم يتم العثور على أسماء داخل الملف (تحقق من عمود الإسم أو الترميز).",
             true
           );
           return;
